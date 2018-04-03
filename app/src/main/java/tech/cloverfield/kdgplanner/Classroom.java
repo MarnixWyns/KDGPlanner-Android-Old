@@ -26,12 +26,28 @@ public class Classroom {
         return classNumber;
     }
 
-    public HashMap<Date, ArrayList<Date>> getStartTimes() {
-        return startTimes;
+    public ArrayList<Date> getStartTimes(Date date) {
+        if (startTimes == null) startTimes = new HashMap<>();
+        if (startTimes.get(date) == null) return new ArrayList<>();
+        return startTimes.get(date);
     }
 
-    public HashMap<Date, ArrayList<Date>> getEndTimes() {
-        return endTimes;
+    public ArrayList<Date> getEndTimes(Date date) {
+        if (endTimes == null) endTimes = new HashMap<>();
+        if (endTimes.get(date) == null) return new ArrayList<>();
+        return endTimes.get(date);
+    }
+
+    public void addToStartTimes(Date date, Date time) {
+        ArrayList<Date> tempTimes = getStartTimes(date);
+        tempTimes.add(time);
+        startTimes.put(date, tempTimes);
+    }
+
+    public void addToEndTimes(Date date, Date time) {
+        ArrayList<Date> tempTimes = getEndTimes(date);
+        tempTimes.add(time);
+        endTimes.put(date, tempTimes);
     }
 
 

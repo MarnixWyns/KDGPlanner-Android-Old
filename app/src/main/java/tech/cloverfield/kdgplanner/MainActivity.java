@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,7 +67,26 @@ public class MainActivity extends AppCompatActivity {
                     //Filter klas
                     String klas = split[3].trim().substring(split[3].indexOf(" "), split[3].indexOf(" ", split[3].indexOf(" ") + 1));
 
+                    //Klas bestaat (nog) niet
+                    boolean added = false;
+                    for (Classroom classroom : classrooms) {
+                        if (classroom.getClassNumber().equals(klas)) {
+                            //Klas bestaat
+                            //Voeg start + eind toe aan hashmap
+                            classroom.addToStartTimes(datum, startUur);
+                            classroom.addToEndTimes(datum, eindUur);
+                            //Verander boolean naar true omdat klas bestaat
+                            added = true;
+                        }
+                    }
+                    //Als boolean nog false is bestaat klas nog niet, maak nieuwe aan
+                    if (!added) {
+                        Classroom classroom = new Classroom(klas, datum);
+                        classroom.addToStartTimes(datum, startUur);
+                        classroom.addToEndTimes(datum, eindUur);
+                    }
 
+                    /* OLD METHOD
                     //See if classroom already exists
                     if (classrooms.isEmpty()) {
                         classrooms.add(new Classroom(klas, datum));
@@ -74,12 +94,14 @@ public class MainActivity extends AppCompatActivity {
                         for (Classroom classroom : classrooms) {
                             if (classroom.getClassNumber().equals(klas)) {
                                 //Voeg start + eind toe aan hashmap
+                                classroom.addToStartTimes(datum, startUur);
+                                classroom.addToEndTimes(datum, eindUur);
                             }
                         }
                         //Anders nieuwe klas object
 
-
                     }
+                    */
                 }
 
                 //classrooms.add(new Classroom())

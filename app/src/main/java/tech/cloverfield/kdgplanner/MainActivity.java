@@ -1,13 +1,9 @@
 package tech.cloverfield.kdgplanner;
 
-import android.app.DialogFragment;
-import android.os.PatternMatcher;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,10 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,7 +58,10 @@ public class MainActivity extends AppCompatActivity {
                     //System.out.printf("Datum: %s\tStart: %s\tEind: %s\n", datum, startUur,eindUur);
 
                     //Filter klas
-                    String klas = split[3].trim().substring(split[3].indexOf(" "), split[3].indexOf(" ", split[3].indexOf(" ") + 1));
+                    String klas = split[3].trim().substring(split[3].indexOf(" ")+1, split[3].indexOf(" ", split[3].indexOf(" ") + 1));
+
+                    //Als arraylist nog niet bestaat, maak het aan
+                    classrooms = new ArrayList<>();
 
                     //Klas bestaat (nog) niet
                     boolean added = false;
@@ -84,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         Classroom classroom = new Classroom(klas, datum);
                         classroom.addToStartTimes(datum, startUur);
                         classroom.addToEndTimes(datum, eindUur);
+                        classrooms.add(classroom);
                     }
 
                     /* OLD METHOD
@@ -106,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //classrooms.add(new Classroom())
             }
+            System.out.println("Done");
         } catch (IOException | ParseException e)
 
         {

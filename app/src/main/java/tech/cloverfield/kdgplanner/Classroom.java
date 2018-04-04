@@ -51,21 +51,40 @@ public class Classroom {
     }
 
 
+    public boolean isAvailable(Date date, Date time) {
+        int i = 0;
 
-    public boolean isAvailable(){
+        for (Date startTime : this.getStartTimes(date)) {
+            if (i == this.getStartTimes(date).size() - 1) {
+                Date endTime = this.getEndTimes(date).get(i);
+                if (time.after(endTime)) {
+                    i++;
+                    return true;
+                }
+            } else if (i == 0) {
+                if (time.before(startTime)) {
+                    i++;
+                    return true;
+                }
+            } else {
+                Date endTime = this.getEndTimes(date).get(i - 1);
+                if (time.after(endTime) && time.before(startTime)) {
+                    i++;
+                    return true;
+                }
+            }
 
-
-
+        }
         return false;
     }
 
-    public Date availableUntil(Date curDate){
+    public Date availableUntil(Date curDate) {
         ArrayList<Date> lessonsStart = startTimes.get(curDate);
         ArrayList<Date> lessonEnds = endTimes.get(curDate);
 
         int i = 0;
         for (Date date : lessonsStart) {
-            if (curDate.before(lessonsStart.get(0)) || (curDate.before(lessonsStart.get(i)) && curDate.after(lessonEnds.get(i-1)))){
+            if (curDate.before(lessonsStart.get(0)) || (curDate.before(lessonsStart.get(i)) && curDate.after(lessonEnds.get(i - 1)))) {
                 return lessonsStart.get(i);
             }
             i++;

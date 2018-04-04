@@ -11,17 +11,10 @@
         android:id="@+id/btnSelectHour"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onTimeSelect"
         android:text="Kies uur" />
-
-    <EditText
-        android:id="@+id/tvSelectedTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="time" />
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:id="@+id/lvClassrooms"/>
 </LinearLayout>

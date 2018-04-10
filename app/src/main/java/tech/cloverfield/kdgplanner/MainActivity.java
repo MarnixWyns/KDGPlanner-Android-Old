@@ -13,7 +13,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -56,20 +55,13 @@ public class MainActivity extends AppCompatActivity {
                 if (!line.equals("") && !line.equals(",,,") && !line.contains("Startdatum")) {
 
                     String[] split = line.split(",");
-                    //System.out.println(strings);
 
-                    DateFormat dpd = new SimpleDateFormat("yyyy-MM-dd");
-                    DateFormat dpu = new SimpleDateFormat("kk:mm");
-
-                    Date datum = dpd.parse(split[0]);
-
-                    Date startUur = dpu.parse(split[1]);
-
-                    Date eindUur = dpu.parse(split[2]);
-                    //System.out.printf("Datum: %s\tStart: %s\tEind: %s\n", datum, startUur,eindUur);
+                    String datum = split[0];
+                    String startUur = split[1];
+                    String eindUur = split[2];
 
                     //Filter klas
-                    String klas = split[3].trim().substring(split[3].indexOf(" ")+1, split[3].indexOf(" ", split[3].indexOf(" ") + 1));
+                    String klas = split[3].trim().substring(split[3].indexOf(" ") + 1, split[3].indexOf(" ", split[3].indexOf(" ") + 1));
 
                     //Als klas forbidden is
                     if (!checkForbidden(klas)) {
@@ -90,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         //Als boolean nog false is bestaat klas nog niet, maak nieuwe aan
                         if (!added) {
-                            Classroom classroom = new Classroom(klas, datum);
+                            Classroom classroom = new Classroom(klas);
                             classroom.addToStartTimes(datum, startUur);
                             classroom.addToEndTimes(datum, eindUur);
                             classrooms.add(classroom);
@@ -98,9 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        } catch (IOException | ParseException e)
-
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

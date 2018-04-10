@@ -8,15 +8,11 @@ import java.util.HashMap;
 public class Classroom {
     private String classNumber;
 
-    private HashMap<Date, ArrayList<Date>> startTimes;
-    private HashMap<Date, ArrayList<Date>> endTimes;
+    private HashMap<String, ArrayList<String>> startTimes;
+    private HashMap<String, ArrayList<String>> endTimes;
 
-    private Date date;
-
-
-    public Classroom(String classNumber, Date date) {
+    public Classroom(String classNumber) {
         this.classNumber = classNumber;
-        this.date = date;
 
         startTimes = new HashMap<>();
         endTimes = new HashMap<>();
@@ -26,48 +22,50 @@ public class Classroom {
         return classNumber;
     }
 
-    public ArrayList<Date> getStartTimes(Date date) {
+    public ArrayList<String> getStartTimes(String date) {
         if (startTimes == null) startTimes = new HashMap<>();
         if (startTimes.get(date) == null) return new ArrayList<>();
         return startTimes.get(date);
     }
 
-    public ArrayList<Date> getEndTimes(Date date) {
+    public ArrayList<String> getEndTimes(String date) {
         if (endTimes == null) endTimes = new HashMap<>();
         if (endTimes.get(date) == null) return new ArrayList<>();
         return endTimes.get(date);
     }
 
-    public void addToStartTimes(Date date, Date time) {
-        ArrayList<Date> tempTimes = getStartTimes(date);
+    public void addToStartTimes(String date, String time) {
+        ArrayList<String> tempTimes = getStartTimes(date);
         tempTimes.add(time);
         startTimes.put(date, tempTimes);
     }
 
-    public void addToEndTimes(Date date, Date time) {
-        ArrayList<Date> tempTimes = getEndTimes(date);
+    public void addToEndTimes(String date, String time) {
+        ArrayList<String> tempTimes = getEndTimes(date);
         tempTimes.add(time);
         endTimes.put(date, tempTimes);
     }
 
 
-    public boolean isAvailable(Date date, Date time) {
+    public boolean isAvailable(String date, String timeValue) {
         int i = 0;
 
-        for (Date startTime : this.getStartTimes(date)) {
-            if (i == this.getStartTimes(date).size() - 1) {
-                Date endTime = this.getEndTimes(date).get(i);
+        Date time = DateFormatter.toDate(timeValue, DateType.TIME);
+        for (String startTimeValue : this.getStartTimes(date)) {
+            Date startTime = DateFormatter.toDate(startTimeValue, DateType.DATE);
+            if (i == 0) {
+                Date endTime = DateFormatter.toDate(this.getEndTimes(date).get(i), DateType.TIME);
                 if (time.after(endTime)) {
                     i++;
                     return true;
                 }
-            } else if (i == 0) {
+            } else if (i == this.getStartTimes(date).size() - 1) {
                 if (time.before(startTime)) {
                     i++;
                     return true;
                 }
             } else {
-                Date endTime = this.getEndTimes(date).get(i - 1);
+                Date endTime = DateFormatter.toDate(this.getEndTimes(date).get(i - 1), DateType.DATE);
                 if (time.after(endTime) && time.before(startTime)) {
                     i++;
                     return true;
@@ -78,12 +76,12 @@ public class Classroom {
         return false;
     }
 
-    public Date availableUntil(Date curDate) {
-        ArrayList<Date> lessonsStart = startTimes.get(curDate);
-        ArrayList<Date> lessonEnds = endTimes.get(curDate);
+    /*public String availableUntil(String curDate) {
+        ArrayList<String> lessonsStart = startTimes.get(curDate);
+        ArrayList<String> lessonEnds = endTimes.get(curDate);
 
         int i = 0;
-        for (Date date : lessonsStart) {
+        for (String date : lessonsStart) {
             if (curDate.before(lessonsStart.get(0)) || (curDate.before(lessonsStart.get(i)) && curDate.after(lessonEnds.get(i - 1)))) {
                 return lessonsStart.get(i);
             }
@@ -91,5 +89,5 @@ public class Classroom {
         }
 
         return null;
-    }
+    }*/
 }

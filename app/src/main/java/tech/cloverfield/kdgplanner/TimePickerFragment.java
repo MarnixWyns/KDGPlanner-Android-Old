@@ -27,26 +27,19 @@ public class TimePickerFragment extends DialogFragment
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        try {
-            MainActivity mainActivity = (MainActivity)  getActivity();
-            mainActivity.button.setText(hourOfDay + ":" + minute);
-            java.text.DateFormat dpd = new SimpleDateFormat("yyyy-MM-dd");
+        MainActivity mainActivity = (MainActivity) getActivity();
+        String time = hourOfDay + ":" + minute;
+        mainActivity.button.setText(time);
 
-            java.text.DateFormat dpu = new SimpleDateFormat("kk:mm");
-            Date time = dpu.parse(hourOfDay + ":" + minute);
-            Date date = Calendar.getInstance().getTime();
-            date.setHours(0);
-            date.setMinutes(0);
-            date.setSeconds(0);
-            ArrayList<Classroom> available = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+        String rawDateValue = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH);
+        String dateValue = DateFormatter.fixDateString(rawDateValue);
 
-            for (Classroom classroom : mainActivity.getClassrooms()) {
-                if (classroom.isAvailable(date, time)) available.add(classroom);
-            }
-
-            mainActivity.displayAvailable(available);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        ArrayList<Classroom> available = new ArrayList<>();
+        for (Classroom classroom : mainActivity.getClassrooms()) {
+            if (classroom.isAvailable(dateValue, time)) available.add(classroom);
         }
+
+        mainActivity.displayAvailable(available);
     }
 }

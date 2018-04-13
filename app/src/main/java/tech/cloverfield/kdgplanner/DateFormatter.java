@@ -32,7 +32,7 @@ public class DateFormatter {
         return newDate;
     }
 
-    private static String fix0(int input) {
+    public static String fix0(int input) {
         if (input >= 10) {
             return String.valueOf(input);
         } else {

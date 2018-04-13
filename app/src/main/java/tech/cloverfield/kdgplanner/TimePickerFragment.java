@@ -37,7 +37,9 @@ public class TimePickerFragment extends DialogFragment
 
         ArrayList<Classroom> available = new ArrayList<>();
         for (Classroom classroom : mainActivity.getClassrooms()) {
-            if (classroom.isAvailable(dateValue, time)) available.add(classroom);
+            if (classroom.isAvailable(dateValue, time)) {
+                available.add(classroom);
+            }
         }
 
         mainActivity.displayAvailable(available);

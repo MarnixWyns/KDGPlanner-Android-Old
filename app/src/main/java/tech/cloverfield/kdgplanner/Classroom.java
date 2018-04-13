@@ -4,12 +4,14 @@ package tech.cloverfield.kdgplanner;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class Classroom {
     private String classNumber;
 
     private HashMap<String, ArrayList<String>> startTimes;
     private HashMap<String, ArrayList<String>> endTimes;
+    private String availability = "";
 
     public Classroom(String classNumber) {
         this.classNumber = classNumber;
@@ -17,6 +19,8 @@ public class Classroom {
         startTimes = new HashMap<>();
         endTimes = new HashMap<>();
     }
+
+    public String getAvailability() { return availability; }
 
     public String getClassNumber() {
         return classNumber;
@@ -51,26 +55,41 @@ public class Classroom {
         int i = 0;
 
         Date time = DateFormatter.toDate(timeValue, DateType.TIME);
-        for (String startTimeValue : this.getStartTimes(date)) {
-            Date startTime = DateFormatter.toDate(startTimeValue, DateType.DATE);
-            if (i == 0) {
-                Date endTime = DateFormatter.toDate(this.getEndTimes(date).get(i), DateType.TIME);
-                if (time.after(endTime)) {
-                    i++;
+        assert time != null;
+        ArrayList<String> dates = this.getStartTimes(date);
+        for (String startTimeValue : dates) {
+            Date startTime = DateFormatter.toDate(startTimeValue, DateType.TIME);
+            Date endTime = DateFormatter.toDate(this.getEndTimes(date).get(i), DateType.TIME);
+            if (dates.size() == 1) {
+                if (time.before(startTime)) {
+                    availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime())) + " minuten)";
+                    return true;
+                } else if (time.after(endTime)) {
+                    availability = "Voor de rest van de dag";
+                    return true;
+                }
+            } else if (i == 0) {
+                if (time.before(startTime)) {
+                    availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime())) + " minuten)";
                     return true;
                 }
             } else if (i == this.getStartTimes(date).size() - 1) {
-                if (time.before(startTime)) {
-                    i++;
+                Date endTimePrevious = DateFormatter.toDate(this.getEndTimes(date).get(i - 1), DateType.TIME);
+                if ((time.before(startTime) && time.after(endTimePrevious))) {
+                    availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime())) + " minuten)";
+                    return true;
+                } else if (time.after(endTime)) {
+                    availability = "Voor de rest van de dag";
                     return true;
                 }
             } else {
-                Date endTime = DateFormatter.toDate(this.getEndTimes(date).get(i - 1), DateType.DATE);
-                if (time.after(endTime) && time.before(startTime)) {
-                    i++;
+                Date endTimePrevious = DateFormatter.toDate(this.getEndTimes(date).get(i - 1), DateType.TIME);
+                if (time.after(endTimePrevious) && time.before(startTime)) {
+                    availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime())) + " minuten)";
                     return true;
                 }
             }
+            i++;
 
         }
         return false;

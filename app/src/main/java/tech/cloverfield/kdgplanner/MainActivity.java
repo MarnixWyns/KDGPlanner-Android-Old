@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         ListView classroomList = findViewById(R.id.lvClassrooms);
         ArrayList<String> adapterList = new ArrayList<>();
         for (Classroom classroom : classrooms) {
-            adapterList.add(classroom.getClassNumber());
+            adapterList.add("Lokaal: " + classroom.getClassNumber() + "\n" + "Beschikbaarheid: " + classroom.getAvailability());
         }
         ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, adapterList);
         classroomList.setAdapter(adapter);

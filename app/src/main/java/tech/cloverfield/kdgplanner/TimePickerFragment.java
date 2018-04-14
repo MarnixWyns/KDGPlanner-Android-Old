@@ -28,7 +28,7 @@ public class TimePickerFragment extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         MainActivity mainActivity = (MainActivity) getActivity();
-        String time = hourOfDay + ":" + minute;
+        String time = DateFormatter.fixTimeString(hourOfDay + ":" + minute);
         mainActivity.button.setText(time);
 
         Calendar cal = Calendar.getInstance();

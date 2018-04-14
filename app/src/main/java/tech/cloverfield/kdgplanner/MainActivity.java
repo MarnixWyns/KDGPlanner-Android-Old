@@ -14,6 +14,7 @@ import android.widget.ListView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -183,7 +184,19 @@ public class MainActivity extends AppCompatActivity {
     public void displayAvailable(ArrayList<Classroom> classrooms) {
         ListView classroomList = findViewById(R.id.lvClassrooms);
         ArrayList<String> adapterList = new ArrayList<>();
+        ArrayList<String> sort = new ArrayList<>();
+        HashMap<String, Classroom> ordered = new HashMap<>();
+
         for (Classroom classroom : classrooms) {
+            String id = classroom.getAvailability() + ";" + classroom.getClassNumber();
+            sort.add(id);
+            ordered.put(id, classroom);
+        }
+
+        Collections.sort(sort, Collections.<String>reverseOrder());
+
+        for (String id : sort) {
+            Classroom classroom = ordered.get(id);
             adapterList.add("Lokaal: " + classroom.getClassNumber() + "\n" + "Beschikbaarheid: " + classroom.getAvailability());
         }
         ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, adapterList);

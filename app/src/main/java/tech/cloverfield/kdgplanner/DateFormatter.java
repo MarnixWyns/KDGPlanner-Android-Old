@@ -3,6 +3,7 @@ package tech.cloverfield.kdgplanner;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class DateFormatter {
 
@@ -12,6 +13,7 @@ public class DateFormatter {
 
             if (type == DateType.TIME) template = new SimpleDateFormat("kk:mm");
             else if (type == DateType.DATE) template = new SimpleDateFormat("yyyy-MM-dd");
+            else if (type == DateType.FULL_DATE) template = new SimpleDateFormat("EEEE d MMMM yyyy kk:mm");
             else return null;
 
             return template.parse(input);
@@ -32,11 +34,35 @@ public class DateFormatter {
         return newDate;
     }
 
+    public static String fixTimeString(String time) {
+        String newTime = "";
+        String[] split = time.split(":");
+        newTime += fix0(Integer.parseInt(split[0]));
+        newTime += ":";
+        newTime += fix0(Integer.parseInt(split[1]));
+        return newTime;
+    }
+
     public static String fix0(int input) {
         if (input >= 10) {
             return String.valueOf(input);
         } else {
             return "0" + String.valueOf(input);
         }
+    }
+
+    public static String translate(String input, HashMap translation) {
+        String returnString = input;
+        for (int i = 0; i < translation.keySet().size(); i++) {
+            String key = (String) translation.keySet().toArray()[i];
+            String value = (String) translation.get(key);
+
+            if (returnString.contains(key)) {
+                String newString = returnString.replaceAll(key, value);
+                returnString = newString;
+            }
+        }
+
+        return returnString;
     }
 }

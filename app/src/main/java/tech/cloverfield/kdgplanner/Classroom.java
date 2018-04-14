@@ -62,7 +62,14 @@ public class Classroom {
             Date endTime = DateFormatter.toDate(this.getEndTimes(date).get(i), DateType.TIME);
             if (dates.size() == 1) {
                 if (time.before(startTime)) {
-                    availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime())) + " minuten)";
+                    long minutes = (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime()));
+                    if (minutes > 59) {
+                        long hour = minutes / 60;
+                        minutes -= (60 * hour);
+                        availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + hour + " uur en " + minutes + " minuten)";
+                    } else {
+                        availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + minutes + " minuten)";
+                    }
                     return true;
                 } else if (time.after(endTime)) {
                     availability = "Voor de rest van de dag";
@@ -70,13 +77,27 @@ public class Classroom {
                 }
             } else if (i == 0) {
                 if (time.before(startTime)) {
-                    availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime())) + " minuten)";
+                    long minutes = (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime()));
+                    if (minutes > 59) {
+                        long hour = minutes / 60;
+                        minutes -= (60 * hour);
+                        availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + hour + " uur en " + minutes + " minuten)";
+                    } else {
+                        availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + minutes + " minuten)";
+                    }
                     return true;
                 }
             } else if (i == this.getStartTimes(date).size() - 1) {
                 Date endTimePrevious = DateFormatter.toDate(this.getEndTimes(date).get(i - 1), DateType.TIME);
                 if ((time.before(startTime) && time.after(endTimePrevious))) {
-                    availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime())) + " minuten)";
+                    long minutes = (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime()));
+                    if (minutes > 59) {
+                        long hour = minutes / 60;
+                        minutes -= (60 * hour);
+                        availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + hour + " uur en " + minutes + " minuten)";
+                    } else {
+                        availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + minutes + " minuten)";
+                    }
                     return true;
                 } else if (time.after(endTime)) {
                     availability = "Voor de rest van de dag";
@@ -85,7 +106,14 @@ public class Classroom {
             } else {
                 Date endTimePrevious = DateFormatter.toDate(this.getEndTimes(date).get(i - 1), DateType.TIME);
                 if (time.after(endTimePrevious) && time.before(startTime)) {
-                    availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime())) + " minuten)";
+                    long minutes = (TimeUnit.MILLISECONDS.toMinutes(startTime.getTime() - time.getTime()));
+                    if (minutes > 59) {
+                        long hour = minutes / 60;
+                        minutes -= (60 * hour);
+                        availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + hour + " uur en " + minutes + " minuten)";
+                    } else {
+                        availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + minutes + " minuten)";
+                    }
                     return true;
                 }
             }

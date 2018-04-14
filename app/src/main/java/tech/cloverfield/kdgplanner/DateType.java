@@ -2,5 +2,6 @@ package tech.cloverfield.kdgplanner;
 
 public enum DateType {
     TIME,
-    DATE
+    DATE,
+    FULL_DATE
 }

@@ -1,16 +1,12 @@
-package tech.cloverfield.kdgplanner;
+package tech.cloverfield.kdgplanner.Main;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.TimePicker;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
@@ -36,7 +32,7 @@ public class TimePickerFragment extends DialogFragment
         String dateValue = DateFormatter.fixDateString(rawDateValue);
 
         ArrayList<Classroom> available = new ArrayList<>();
-        for (Classroom classroom : mainActivity.getClassrooms()) {
+        for (Classroom classroom : mainActivity.getReader().getClassrooms()) {
             if (classroom.isAvailable(dateValue, time)) {
                 available.add(classroom);
             }

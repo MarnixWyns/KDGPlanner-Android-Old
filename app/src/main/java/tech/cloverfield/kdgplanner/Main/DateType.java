@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner;
+package tech.cloverfield.kdgplanner.Main;
 
 public enum DateType {
     TIME,

@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner;
+package tech.cloverfield.kdgplanner.Main;
 
 
 import java.util.ArrayList;
@@ -26,13 +26,13 @@ public class Classroom {
         return classNumber;
     }
 
-    public ArrayList<String> getStartTimes(String date) {
+    private ArrayList<String> getStartTimes(String date) {
         if (startTimes == null) startTimes = new HashMap<>();
         if (startTimes.get(date) == null) return new ArrayList<>();
         return startTimes.get(date);
     }
 
-    public ArrayList<String> getEndTimes(String date) {
+    private ArrayList<String> getEndTimes(String date) {
         if (endTimes == null) endTimes = new HashMap<>();
         if (endTimes.get(date) == null) return new ArrayList<>();
         return endTimes.get(date);

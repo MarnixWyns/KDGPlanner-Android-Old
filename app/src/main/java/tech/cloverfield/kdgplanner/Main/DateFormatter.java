@@ -1,4 +1,6 @@
-package tech.cloverfield.kdgplanner;
+package tech.cloverfield.kdgplanner.Main;
+
+import android.annotation.SuppressLint;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -7,6 +9,7 @@ import java.util.HashMap;
 
 public class DateFormatter {
 
+    @SuppressLint("SimpleDateFormat")
     public static Date toDate(String input, DateType type) {
         try {
             DateFormat template;
@@ -58,8 +61,7 @@ public class DateFormatter {
             String value = (String) translation.get(key);
 
             if (returnString.contains(key)) {
-                String newString = returnString.replaceAll(key, value);
-                returnString = newString;
+                returnString = returnString.replaceAll(key, value);
             }
         }
 

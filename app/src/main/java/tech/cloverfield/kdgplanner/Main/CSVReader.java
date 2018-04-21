@@ -1,31 +1,27 @@
-package tech.cloverfield.kdgplanner;
+package tech.cloverfield.kdgplanner.Main;
 
 import android.annotation.SuppressLint;
-import android.app.DialogFragment;
+import android.content.Context;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class MainActivity extends AppCompatActivity {
+public class CSVReader {
 
-    public boolean loading = true;
-    public int total, progress = 0;
+    private int progress, total = 0;
+    private boolean loading = true;
+    private ArrayList<Classroom> classrooms;
 
-    public Button button;
+
+    //Lokalen die niet gebruikt kunnen worden
     private String[] forbiddenRooms = {"-107", "001", "004", "008", "114", "115", "116", "117", "118", "213", "214", "217", "306", "311", "400", "411", "501", "510"};
+
+    //Nodig om van Nederlandse CSV maanden om te zetten naar engelse maanden
     private HashMap<String, String> conversionMap = new HashMap<String, String>() {{
         put("januari", "january");
         put("februari", "february");
@@ -47,50 +43,29 @@ public class MainActivity extends AppCompatActivity {
         put("zaterdag", "saturday");
         put("zondag", "sunday");
     }};
-    private ArrayList<Classroom> classrooms;
-    private View.OnClickListener btnOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!loading) {
-                DialogFragment dialog = new TimePickerFragment();
-                dialog.show(getFragmentManager(), "timePicker");
-            } else {
-                int percentage = progress * 100 / total;
-                Snackbar.make(findViewById(R.id.coordinator), "De database is nog niet geladen... even geduld. (" + percentage + "%)", Snackbar.LENGTH_SHORT).show();
-            }
-        }
-    };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        button = findViewById(R.id.btnSelectHour);
-        button.setOnClickListener(btnOnClickListener);
-        readCSV();
-    }
 
-    public ArrayList<Classroom> getClassrooms() {
-        return classrooms;
+
+    public CSVReader() {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void readCSV() {
+    //Om te voorkomen dat android programma vasthangt moet de CSV async ingelezen worden
+    public void readCSV(Context context) {
+        final Context c = context;
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 loading = true;
                 try {
 
-                    Scanner scanner = new Scanner(getAssets().open("timetable_new.csv")).useDelimiter(",");
+                    Scanner scanner = new Scanner(c.getAssets().open("timetable_new.csv")).useDelimiter(",");
                     while (scanner.hasNextLine()) {
                         total++;
                         scanner.nextLine();
                     }
 
-
-
-                    scanner = new Scanner(getAssets().open("timetable_new.csv")).useDelimiter(",");
+                    scanner = new Scanner(c.getAssets().open("timetable_new.csv")).useDelimiter(",");
 
                     boolean hasIndexes = false;
 
@@ -175,32 +150,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void v){
                 loading = false;
-                // your code
             }
         }.execute();
-    }
-
-
-    public void displayAvailable(ArrayList<Classroom> classrooms) {
-        ListView classroomList = findViewById(R.id.lvClassrooms);
-        ArrayList<String> adapterList = new ArrayList<>();
-        ArrayList<String> sort = new ArrayList<>();
-        HashMap<String, Classroom> ordered = new HashMap<>();
-
-        for (Classroom classroom : classrooms) {
-            String id = classroom.getAvailability() + ";" + classroom.getClassNumber();
-            sort.add(id);
-            ordered.put(id, classroom);
-        }
-
-        Collections.sort(sort, Collections.<String>reverseOrder());
-
-        for (String id : sort) {
-            Classroom classroom = ordered.get(id);
-            adapterList.add("Lokaal: " + classroom.getClassNumber() + "\n" + "Beschikbaarheid: " + classroom.getAvailability());
-        }
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, adapterList);
-        classroomList.setAdapter(adapter);
     }
 
     private boolean checkForbidden(String s) {
@@ -213,5 +164,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return bad;
+    }
+
+    public boolean hasLoaded(){
+        return !loading;
+    }
+
+    public int loadPercentage(){
+        if (total == 0) {
+            return 100;
+        } else return progress * 100 / total;
+    }
+
+    public ArrayList<Classroom> getClassrooms() {
+        return classrooms;
     }
 }

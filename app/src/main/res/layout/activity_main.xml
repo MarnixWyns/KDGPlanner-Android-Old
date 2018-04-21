@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/coordinator">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabReservation"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom |right"
+        android:layout_margin="24dp"
+        android:clickable="true"
+        app:elevation="4dp"
+        app:srcCompat="@drawable/ic_add_black_32dp" />
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="tech.cloverfield.kdgplanner.MainActivity"
+        tools:context="tech.cloverfield.kdgplanner.Main.MainActivity"
         android:orientation="vertical">
 
         <Button
@@ -19,6 +31,17 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/lvClassrooms"/>
+            android:id="@+id/lvClassrooms">
+
+
+        </ListView>
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:max="100" />
 </android.support.design.widget.CoordinatorLayout>

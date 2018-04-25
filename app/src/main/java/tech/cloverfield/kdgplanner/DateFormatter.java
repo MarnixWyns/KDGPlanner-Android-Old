@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.Main;
+package tech.cloverfield.kdgplanner;
 
 import android.annotation.SuppressLint;
 
@@ -6,6 +6,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+
+import tech.cloverfield.kdgplanner.Main.DateType;
 
 public class DateFormatter {
 

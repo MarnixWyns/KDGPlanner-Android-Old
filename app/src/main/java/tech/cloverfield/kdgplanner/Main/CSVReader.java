@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import tech.cloverfield.kdgplanner.DateFormatter;
+
 public class CSVReader {
 
     private int progress, total = 0;

@@ -9,11 +9,12 @@
         android:id="@+id/fabReservation"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_gravity="bottom |right"
+        android:layout_gravity="bottom |end"
         android:layout_margin="24dp"
         android:clickable="true"
         app:elevation="4dp"
-        app:srcCompat="@drawable/ic_add_black_32dp" />
+        app:srcCompat="@drawable/ic_add_black_32dp"
+        android:focusable="true" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -37,11 +38,4 @@
         </ListView>
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:max="100" />
 </android.support.design.widget.CoordinatorLayout>

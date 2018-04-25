@@ -20,7 +20,6 @@ import tech.cloverfield.kdgplanner.Reservation.ReservationActivity;
 
 //TODO: Send email option to reservate a classroom
 //TODO: Option to sync/obtain CSV from interwebs
-//TODO: Melding indien geen les activiteiten
 
 
 public class MainActivity extends AppCompatActivity {
@@ -71,18 +70,24 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> sort = new ArrayList<>();
         HashMap<String, Classroom> ordered = new HashMap<>();
 
-        for (Classroom classroom : classrooms) {
-            String id = classroom.getAvailability() + ";" + classroom.getClassNumber();
-            sort.add(id);
-            ordered.put(id, classroom);
+        if (classrooms.size() == 0){
+            adapterList.add("Vandaag geen lesactiviteiten");
+        } else {
+            for (Classroom classroom : classrooms) {
+                String id = classroom.getAvailability() + ";" + classroom.getClassNumber();
+                sort.add(id);
+                ordered.put(id, classroom);
+            }
+
+            Collections.sort(sort, Collections.<String>reverseOrder());
+
+            for (String id : sort) {
+                Classroom classroom = ordered.get(id);
+                adapterList.add("Lokaal: " + classroom.getClassNumber() + "\n" + "Beschikbaarheid: " + classroom.getAvailability());
+            }
         }
 
-        Collections.sort(sort, Collections.<String>reverseOrder());
 
-        for (String id : sort) {
-            Classroom classroom = ordered.get(id);
-            adapterList.add("Lokaal: " + classroom.getClassNumber() + "\n" + "Beschikbaarheid: " + classroom.getAvailability());
-        }
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, adapterList);
         classroomList.setAdapter(adapter);
     }

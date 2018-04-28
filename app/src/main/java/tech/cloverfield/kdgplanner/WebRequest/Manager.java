@@ -1,3 +1,5 @@
+
+/*
 package tech.cloverfield.kdgplanner.WebRequest;
 
 import android.content.Context;
@@ -28,7 +30,7 @@ public class Manager {
     }
 
     public static File sendRequest() {
-        UrlRequest urlRequest = new UrlRequest(getValues, Request.Method.GET)
+        UrlRequest urlRequest = new UrlRequest(getValues, Request.Method.GET);
     }
 
     public static File download(String downloadUrl) {
@@ -36,3 +38,4 @@ public class Manager {
     }
 
 }
+*/

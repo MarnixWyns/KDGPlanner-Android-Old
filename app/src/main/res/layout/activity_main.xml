@@ -1,41 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swiperefresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/coordinator">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabReservation"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom |end"
-        android:layout_margin="24dp"
-        android:clickable="true"
-        app:elevation="4dp"
-        app:srcCompat="@drawable/ic_add_black_32dp"
-        android:focusable="true" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="tech.cloverfield.kdgplanner.Main.MainActivity"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btnSelectHour"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Kies uur" />
-
-        <ListView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/lvClassrooms">
+            android:orientation="vertical"
+            tools:context="tech.cloverfield.kdgplanner.Main.MainActivity">
+
+            <Button
+                android:id="@+id/btnSelectHour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kies uur" />
+
+            <ListView
+                android:id="@+id/lvClassrooms"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
 
-        </ListView>
-    </LinearLayout>
+            </ListView>
 
-</android.support.design.widget.CoordinatorLayout>
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabReservation"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="bottom |end"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:elevation="4dp"
+            app:srcCompat="@drawable/ic_add_black_32dp"
+            tools:layout_editor_absoluteX="288dp"
+            tools:layout_editor_absoluteY="535dp" />
+    </RelativeLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

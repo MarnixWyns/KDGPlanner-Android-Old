@@ -1,3 +1,4 @@
+/*
 package tech.cloverfield.kdgplanner.WebRequest;
 
 import com.android.volley.AuthFailureError;
@@ -18,3 +19,4 @@ public class UrlRequest extends StringRequest{
 
     }
 }
+*/

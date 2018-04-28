@@ -8,11 +8,23 @@
     android:gravity="center">
 
     <!-- Date and time -->
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Reserveer een lokaal"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="#000"
+        android:textSize="24sp" />
+
     <LinearLayout
         android:id="@+id/ReqGegevens"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="60dp"
+        android:layout_alignParentTop="true"
         android:orientation="vertical">
 
         <EditText

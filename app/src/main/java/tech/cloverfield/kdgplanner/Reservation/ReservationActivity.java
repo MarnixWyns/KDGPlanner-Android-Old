@@ -1,18 +1,26 @@
 package tech.cloverfield.kdgplanner.Reservation;
 
-import android.app.DialogFragment;
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 import tech.cloverfield.kdgplanner.R;
 
 public class ReservationActivity extends AppCompatActivity {
+
+    Calendar myCalendar = Calendar.getInstance();
 
     //Default values, remove before deployment
     String datum = "";
@@ -56,14 +64,75 @@ public class ReservationActivity extends AppCompatActivity {
         Button sendMail = findViewById(R.id.btnSend);
         sendMail.setOnClickListener(sendMailListener);
 
-        tbStartTime.setOnClickListener(startTimeSelector);
-        tbEndTime.setOnClickListener(endTimeSelector);
+
+        tbStartTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    Calendar mcurrentTime = Calendar.getInstance();
+                    int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                    int minute = mcurrentTime.get(Calendar.MINUTE);
+
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(ReservationActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            String s = selectedHour + ":" + selectedMinute;
+                            tbStartTime.setText(s);
+                        }
+                    }, hour, minute, true);
+                    mTimePicker.show();
+                }
+            }
+        });
+
+        tbEndTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    Calendar mcurrentTime = Calendar.getInstance();
+                    int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                    int minute = mcurrentTime.get(Calendar.MINUTE);
+
+                    TimePickerDialog mTimePicker;
+                    mTimePicker = new TimePickerDialog(ReservationActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            String s = selectedHour + ":" + selectedMinute;
+                            tbEndTime.setText(s);
+                        }
+                    }, hour, minute, true);
+                    mTimePicker.show();
+                }
+            }
+        });
+
+        tbDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    new DatePickerDialog(ReservationActivity.this, date, myCalendar
+                            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                }
+            }
+        });
+
     }
+
+    private DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            tbDate.setText(dayOfMonth + "/" + monthOfYear + "/" + year);
+        }
+    };
+
 
     private View.OnClickListener sendMailListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
             processInputs();
 
             //region Mail intent
@@ -87,13 +156,8 @@ public class ReservationActivity extends AppCompatActivity {
     };
 
     private void processInputs() {
-        //TODO: Test if all variables are entered correctly
-
-        if (cbBeamer.isChecked()) {
-            beamerReq = "een";
-        } else {
-            beamerReq = "geen";
-        }
+        if (cbBeamer.isChecked()) beamerReq = "een";
+        else beamerReq = "geen";
 
         for (int i = 0; i < inputs.length; i++) {
             outputStrings[i] = inputs[i].getText().toString();
@@ -113,27 +177,4 @@ public class ReservationActivity extends AppCompatActivity {
 
         return values;
     }
-
-    private View.OnClickListener dateSelector = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-
-        }
-    };
-
-    private View.OnClickListener startTimeSelector = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            DialogFragment dialog = new TimePickerFragment();
-            dialog.show(getFragmentManager(), "timePicker");
-        }
-    };
-
-    private View.OnClickListener endTimeSelector = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            DialogFragment dialog = new TimePickerFragment();
-            dialog.show(getFragmentManager(), "timePicker");
-        }
-    };
 }

@@ -2,6 +2,7 @@ package tech.cloverfield.kdgplanner.Main;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 
 import tech.cloverfield.kdgplanner.R;
 import tech.cloverfield.kdgplanner.Reservation.ReservationActivity;
+import tech.cloverfield.kdgplanner.WebRequest.Manager;
 
 
 //TODO: Option to sync/obtain CSV from interwebs
@@ -35,6 +37,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
+
+
+
+
+
+
+        while (!RequestPermissions.isGranted()) {
+            if (!RequestPermissions.getRequestInProgress()) RequestPermissions.requestPermissions(this);
+        }
+
+        Manager manager = new Manager(this);
+        manager.sendRequest();
+
+
+
+
+
+
+
+
+
 
         button = findViewById(R.id.btnSelectHour);
         button.setOnClickListener(btnOnClickListener);
@@ -118,5 +145,17 @@ public class MainActivity extends AppCompatActivity {
 
     public CSVReader getReader() {
         return reader;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == RequestPermissions.getRequestCode()) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                RequestPermissions.setGranted(true);
+            } else {
+
+            }
+            RequestPermissions.setRequestInProgress(false);
+        }
     }
 }

@@ -17,11 +17,25 @@
             android:orientation="vertical"
             tools:context="tech.cloverfield.kdgplanner.Main.MainActivity">
 
-            <Button
-                android:id="@+id/btnSelectHour"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Kies uur" />
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <Spinner
+                    android:id="@+id/spinnerMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btnSelectHour"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Kies uur" />
+            </LinearLayout>
 
             <ListView
                 android:id="@+id/lvClassrooms"

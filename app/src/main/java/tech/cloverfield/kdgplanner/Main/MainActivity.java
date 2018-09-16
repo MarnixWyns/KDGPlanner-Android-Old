@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,36 +33,29 @@ public class MainActivity extends AppCompatActivity {
     private CSVReader reader;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+    private Spinner spinner;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
-
-
-
-
-
         while (!RequestPermissions.isGranted()) {
             if (!RequestPermissions.getRequestInProgress()) RequestPermissions.requestPermissions(this);
         }
 
+        // Get items from resources string array and put them in spinner values.
+        spinner = (Spinner) findViewById(R.id.spinnerMain);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.campussen, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
         Manager manager = new Manager(this);
         manager.sendRequest();
-
-
-
-
-
-
-
-
-
 
         button = findViewById(R.id.btnSelectHour);
         button.setOnClickListener(btnOnClickListener);

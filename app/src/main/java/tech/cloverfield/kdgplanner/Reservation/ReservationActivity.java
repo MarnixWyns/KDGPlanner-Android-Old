@@ -7,15 +7,19 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
 
+import tech.cloverfield.kdgplanner.Main.Campus;
+import tech.cloverfield.kdgplanner.Main.DateType;
 import tech.cloverfield.kdgplanner.R;
 
 public class ReservationActivity extends AppCompatActivity {
@@ -26,12 +30,13 @@ public class ReservationActivity extends AppCompatActivity {
     String datum = "";
     String startTijd = "";
     String eindTijd = "";
+    String campus = "";
     String naam = "John Doe";
     String aantal = "";
     String beamerReq = "een";
 
     String[] outputStrings = {
-            datum, startTijd, eindTijd, naam, aantal
+            datum, startTijd, campus ,eindTijd, naam, aantal
     };
 
     EditText tbDate;
@@ -41,6 +46,10 @@ public class ReservationActivity extends AppCompatActivity {
     EditText tbAmount;
     CheckBox cbBeamer;
 
+    Spinner spinner;
+
+
+
     EditText[] inputs = new EditText[5];
 
     @Override
@@ -48,6 +57,9 @@ public class ReservationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation);
 
+
+
+        this.spinner = (Spinner) findViewById(R.id.spinnerReservation);
         this.tbDate = findViewById(R.id.tbDate);
         this.tbStartTime = findViewById(R.id.tbStartTime);
         this.tbEndTime = findViewById(R.id.tbEndTime);
@@ -64,6 +76,11 @@ public class ReservationActivity extends AppCompatActivity {
         Button sendMail = findViewById(R.id.btnSend);
         sendMail.setOnClickListener(sendMailListener);
 
+        // Get items from resources string array and put them in spinner values.
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.campussen, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         tbStartTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -162,6 +179,8 @@ public class ReservationActivity extends AppCompatActivity {
         for (int i = 0; i < inputs.length; i++) {
             outputStrings[i] = inputs[i].getText().toString();
         }
+
+
     }
 
     private String[] makeMail() {
@@ -170,7 +189,7 @@ public class ReservationActivity extends AppCompatActivity {
         values[0] = "Lokaalreservatie " + outputStrings[0];
 
         values[1] = "Beste, \n\n" +
-                "Ik zou graag een lokaal willen reserveren op " + outputStrings[0] + " van " + outputStrings[1] + " tot " + outputStrings[2] + ".\n" +
+                "Ik zou graag een lokaal willen reserveren op " + outputStrings[0] + " van " + outputStrings[1] + " tot " + outputStrings[2] + " op campus " + spinner.getItemAtPosition(0) + ".\n" +
                 "Ik zou het willen reserveren op naam van " + outputStrings[3].trim() + " en we gaan er met " + outputStrings[4] + " personen zitten.\n" +
                 "We hebben " + beamerReq + " beamer nodig.\n\n" +
                 "Met vriendelijke groet, \n" + outputStrings[3].trim() + "\n\n" + "Reservatie verzonden via KDGPlanner.";

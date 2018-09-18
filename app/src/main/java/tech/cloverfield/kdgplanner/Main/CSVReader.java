@@ -53,7 +53,7 @@ public class CSVReader {
 
     @SuppressLint("StaticFieldLeak")
     //Om te voorkomen dat android programma vasthangt moet de CSV async ingelezen worden
-    public void readCSV(Context context) {
+    public void readCSV(Context context, final String campus) {
         final Context c = context;
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -61,13 +61,13 @@ public class CSVReader {
                 loading = true;
                 try {
 
-                    Scanner scanner = new Scanner(c.getAssets().open("timetable_new.csv")).useDelimiter(",");
+                    Scanner scanner = new Scanner(c.getAssets().open("timetable_" + campus + ".csv")).useDelimiter(",");
                     while (scanner.hasNextLine()) {
                         total++;
                         scanner.nextLine();
                     }
 
-                    scanner = new Scanner(c.getAssets().open("timetable_new.csv")).useDelimiter(",");
+                    scanner = new Scanner(c.getAssets().open("timetable_Groenplaats.csv")).useDelimiter(",");
 
                     boolean hasIndexes = false;
 

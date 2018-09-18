@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -27,7 +29,7 @@ import tech.cloverfield.kdgplanner.WebRequest.Manager;
 //TODO: Option to sync/obtain CSV from interwebs
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     public Button button;
     private CSVReader reader;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Get items from resources string array and put them in spinner values.
         spinner = (Spinner) findViewById(R.id.spinnerMain);
+        spinner.setOnItemSelectedListener(this);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.campussen, android.R.layout.simple_spinner_item);
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(fabOnClick);
 
         reader = new CSVReader();
-        reader.readCSV(this);
+        reader.readCSV(this, spinner.getSelectedItem().toString());
 
         swipeRefreshLayout = findViewById(R.id.swiperefresh);
 
@@ -87,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
     private View.OnClickListener fabOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -107,6 +112,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+
+
 
     public void displayAvailable(ArrayList<Classroom> classrooms) {
         ListView classroomList = findViewById(R.id.lvClassrooms);
@@ -151,5 +159,18 @@ public class MainActivity extends AppCompatActivity {
             }
             RequestPermissions.setRequestInProgress(false);
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //Als het default text is probeer dan niet om CSV op te halen
+        if (!button.getText().equals("Kies uur")) {
+            Toast.makeText(this, spinner.getSelectedItem().toString() , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Auto generated stub
     }
 }

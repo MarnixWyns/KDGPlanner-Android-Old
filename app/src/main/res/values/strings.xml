@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KDGPlanner</string>
+    <string name="app_name">KDG Planner</string>
 
     <string-array name="campussen">
         <item>Groenplaats</item>

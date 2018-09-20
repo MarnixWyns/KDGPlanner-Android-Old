@@ -29,7 +29,7 @@ import tech.cloverfield.kdgplanner.WebRequest.Manager;
 //TODO: Option to sync/obtain CSV from interwebs
 
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     public Button button;
     private CSVReader reader;
@@ -38,14 +38,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner spinner;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         while (!RequestPermissions.isGranted()) {
-            if (!RequestPermissions.getRequestInProgress()) RequestPermissions.requestPermissions(this);
+            if (!RequestPermissions.getRequestInProgress())
+                RequestPermissions.requestPermissions(this);
         }
 
         // Get items from resources string array and put them in spinner values.
@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-
     private View.OnClickListener fabOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -104,16 +103,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private View.OnClickListener btnOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (reader.hasLoaded()) {
+            try {
                 DialogFragment dialog = new TimePickerFragment();
                 dialog.show(getFragmentManager(), "timePicker");
-            } else {
+
+            } catch (Exception e) {
+
                 Snackbar.make(findViewById(R.id.coordinator), "De database is nog niet geladen... even geduld. (" + reader.loadPercentage() + "%)", Snackbar.LENGTH_SHORT).show();
             }
         }
+
+
     };
-
-
 
 
     public void displayAvailable(ArrayList<Classroom> classrooms) {
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         //Als het default text is probeer dan niet om CSV op te halen
         if (!button.getText().equals("Kies uur")) {
-            Toast.makeText(this, spinner.getSelectedItem().toString() , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, spinner.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
         }
     }
 

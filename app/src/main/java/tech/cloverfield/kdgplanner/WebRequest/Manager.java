@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class Manager {
-
+/*
     private String url = "https://mijnrooster.kdg.be/export?";
     private HashMap<String, String> values = new HashMap<>();
     private RequestQueue requestQueue;
@@ -77,6 +77,6 @@ public class Manager {
 
     public File download(String downloadUrl) {
         return null;
-    }
+    }*/
 
 }

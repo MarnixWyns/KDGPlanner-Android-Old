@@ -14,9 +14,10 @@ import java.util.Scanner;
 import tech.cloverfield.kdgplanner.DateFormatter;
 
 public class CSVReader {
+/*
+    //private int progress, total = 0;
+    //private boolean loading = true;
 
-    private int progress, total = 0;
-    private boolean loading = true;
     private ArrayList<Classroom> classrooms;
 
 
@@ -53,12 +54,16 @@ public class CSVReader {
 
     @SuppressLint("StaticFieldLeak")
     //Om te voorkomen dat android programma vasthangt moet de CSV async ingelezen worden
-    public void readCSV(Context context, final String campus) {
+    public void update(Context context, final String campus) {
         final Context c = context;
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                loading = true;
+                //loading = true;
+                HttpRequestHelper httpRequestHelper = new HttpRequestHelper("http://server.devvix.com/available_classrooms");
+                Lokalen_DB lokalen_db = new Lokalen_DB(c);
+
+
                 try {
 
                     Scanner scanner = new Scanner(c.getAssets().open("timetable_" + campus + ".csv")).useDelimiter(",");
@@ -156,7 +161,7 @@ public class CSVReader {
         }.execute();
     }
 
-    private boolean checkForbidden(String s) {
+    /*private boolean checkForbidden(String s) {
         boolean bad = false;
 
         for (String forbiddenRoom : forbiddenRooms) {
@@ -166,9 +171,9 @@ public class CSVReader {
         }
 
         return bad;
-    }
+    }*/
 
-    public boolean hasLoaded(){
+    /*public boolean hasLoaded(){
         return !loading;
     }
 
@@ -180,5 +185,5 @@ public class CSVReader {
 
     public ArrayList<Classroom> getClassrooms() {
         return classrooms;
-    }
+    }*/
 }

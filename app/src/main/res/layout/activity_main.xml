@@ -9,7 +9,8 @@
     <!-- TODO fix refresh layout to allow scrolling upwards instead of refreshing -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/coordinator">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,7 +55,7 @@
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_gravity="bottom |end"
+            android:layout_gravity="bottom|end"
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="20dp"
             android:clickable="true"

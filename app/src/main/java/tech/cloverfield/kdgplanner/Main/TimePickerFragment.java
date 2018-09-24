@@ -34,10 +34,8 @@ public class TimePickerFragment extends DialogFragment
         String dateValue = DateFormatter.fixDateString(rawDateValue);
 
         ArrayList<Classroom> available = new ArrayList<>();
-        for (Classroom classroom : mainActivity.getReader().getClassrooms()) {
-            if (classroom.isAvailable(dateValue, time)) {
-                available.add(classroom);
-            }
+        for (Classroom classroom : mainActivity.getLokalen_db().getRooms(mainActivity.getSelectedCampus())) {
+            available.add(classroom);
         }
 
         mainActivity.displayAvailable(available);

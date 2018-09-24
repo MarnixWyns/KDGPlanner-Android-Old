@@ -1,15 +1,39 @@
 package tech.cloverfield.kdgplanner.Main;
 
 
-import java.util.ArrayList;
+/*import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-import tech.cloverfield.kdgplanner.DateFormatter;
+import tech.cloverfield.kdgplanner.DateFormatter;*/
 
 public class Classroom {
-    private String classNumber;
+    private String _classNumber;
+    private String _startHour;
+
+    public Classroom(String cn, String sh) {
+        _classNumber = cn;
+        _startHour = sh;
+    }
+
+    public String getClassNumber() {
+        return _classNumber;
+    }
+
+    public void setClassNumber(String classNumber) {
+        this._classNumber = classNumber;
+    }
+
+    public String getStartHour() {
+        return _startHour;
+    }
+
+    public void setStartHour(String startHour) {
+        this._startHour = startHour;
+    }
+
+    /*private String classNumber;
 
     private HashMap<String, ArrayList<String>> startTimes;
     private HashMap<String, ArrayList<String>> endTimes;
@@ -106,5 +130,5 @@ public class Classroom {
         } else {
             availability = "Tot " + DateFormatter.fix0(startTime.getHours()) + ":" + DateFormatter.fix0(startTime.getMinutes()) + " (" + minutes + " minuten)";
         }
-    }
+    }*/
 }

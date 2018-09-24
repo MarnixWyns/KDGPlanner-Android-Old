@@ -18,8 +18,6 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
-import tech.cloverfield.kdgplanner.Main.Campus;
-import tech.cloverfield.kdgplanner.Main.DateType;
 import tech.cloverfield.kdgplanner.R;
 
 public class ReservationActivity extends AppCompatActivity {

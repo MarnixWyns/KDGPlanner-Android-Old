@@ -54,7 +54,9 @@ public class Lokalen_DB extends SQLiteOpenHelper {
     public void jsonHandler(JSONArray jsonArray) {
         if (jsonArray == null) {
             internet = false;
+            loaded = false;
         } else {
+            this.getWritableDatabase().execSQL("DELETE FROM Lokalen");
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -85,11 +87,12 @@ public class Lokalen_DB extends SQLiteOpenHelper {
     }
 
     public void update() {
-        this.getWritableDatabase().execSQL("DELETE FROM Lokalen");
-        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE DATE(Date) = date('now') AND date('now') NOT BETWEEN DATETIME(Start_Time, '-15 minutes') AND DATETIME(End_Time, '+5 minutes') AND date('now') < Start_Time GROUP BY Classroom, Start_Time ORDER BY Start_Time ASC", null);
+        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE DATE(Date) = date('now')", null);
         if (res.getCount() < 1) {
             loaded = false;
             requestJSON("http://server.devvix.com:8000/available_classrooms");
+        } else {
+            loaded = true;
         }
     }
 
@@ -106,14 +109,29 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         return true;
     }
 
-    public List<Classroom> getRooms(String Campus) {
-        List<Classroom> classroomList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM Lokalen WHERE DATE(Date) = date('now') AND date('now') NOT BETWEEN DATETIME(Start_Time, '-15 minutes') AND DATETIME(End_Time, '+5 minutes') AND date('now') < Start_Time GROUP BY Classroom, Start_Time ORDER BY Start_Time ASC", null);
-        res.moveToFirst();
+    public ArrayList<Classroom> getRooms(String Campus, String time) {
+        String addCampus = "";
+        if (Campus != null) {
+            addCampus = " Campus LIKE '%" + Campus.toUpperCase() + "%' AND";
+        }
 
+        ArrayList<Classroom> classroomList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT Classroom," +
+                " Start_Time FROM" +
+                " Lokalen WHERE" +
+                addCampus +
+                " DATE(Date) = date('now') AND" +
+                " date('now') NOT BETWEEN" +
+                " TIME(Start_Time, '-15 minutes') AND" +
+                " TIME(End_Time, '+5 minutes') AND" +
+                " TIME('" + time + "') < Start_Time GROUP BY" +
+                " Classroom, Start_Time ORDER BY" +
+                " Start_Time ASC", null);
+
+        res.moveToFirst();
         while (!res.isAfterLast()) {
-            classroomList.add(new Classroom(res.getString(1), res.getString(2)));
+            classroomList.add(new Classroom(res.getString(0), res.getString(1)));
             res.moveToNext();
         }
 

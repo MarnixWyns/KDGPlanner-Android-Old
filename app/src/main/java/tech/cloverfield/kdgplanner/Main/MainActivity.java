@@ -19,10 +19,13 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
 import tech.cloverfield.kdgplanner.R;
@@ -68,9 +71,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        //Manager manager = new Manager(this);
-        //manager.sendRequest();
-
         button = findViewById(R.id.btnSelectHour);
         button.setOnClickListener(btnOnClickListener);
 
@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public boolean requestPermissions() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_KEY);
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET}, PERMISSION_KEY);
                 return false;
             } else {
                 return true;
@@ -163,25 +163,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (classrooms.size() == 0) {
             adapterList.add("Vandaag geen lesactiviteiten");
         } else {
-             for (Classroom classroom : classrooms) {
-                 Date classStartTime = DateFormatter.toDate(classroom.getStartHour(), DateType.TIME);
-                 Date currentTime = Calendar.getInstance().getTime();
-                 String buttonText = (String) button.getText();
-                 String classroomDisplay = classroom.getClassNumber();
-                 if (includeClassroom) classroomDisplay += " (" + convertCampus(selectedCammpus) + ")";
+            try {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date currentTime = simpleDateFormat.parse("1970-01-01");
+                currentTime.setHours(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+                currentTime.setMinutes(Calendar.getInstance().get(Calendar.MINUTE));
 
-                 if (buttonText.contains(":")) {
-                     currentTime = DateFormatter.toDate(buttonText, DateType.TIME);
-                 }
+                for (Classroom classroom : classrooms) {
+                    Date classStartTime = DateFormatter.toDate(classroom.getStartHour(), DateType.TIME);
 
-                 long diff = classStartTime.getTime() - currentTime.getTime();
+                    String buttonText = (String) button.getText();
+                    String classroomDisplay = classroom.getClassNumber();
+                    if (includeClassroom)
+                        classroomDisplay += " (" + convertCampus(selectedCammpus) + ")";
 
+                    if (buttonText.contains(":")) {
+                        currentTime = DateFormatter.toDate(buttonText, DateType.TIME);
+                    }
 
-                 adapterList.add("Lokaal: " + classroomDisplay + "\nBeschikbaarheid: " + (diff / (60*60*1000) % 24) + " uren en " + (diff / (60*1000) % 60) + " minuten (tot: " + DateFormatter.fixTimeString(classStartTime.getHours() + ":" + classStartTime.getMinutes()) + ")");
-                /*String id = classroom.getAvailability() + ";" + classroom.getClassNumber();
+                    long diff = classStartTime.getTime() - currentTime.getTime();
+
+                    adapterList.add("Lokaal: " + classroomDisplay + "\nBeschikbaarheid: " + (diff / (60 * 60 * 1000) % 24) + " uren en " + (diff / (60 * 1000) % 60) + " minuten (tot: " + DateFormatter.fixTimeString(classStartTime.getHours() + ":" + classStartTime.getMinutes()) + "u)");
+                 /*String id = classroom.getAvailability() + ";" + classroom.getClassNumber();
                 sort.add(id);
                 ordered.put(id, classroom);*/
-            }
+                }
 
             /*Collections.sort(sort, Collections.<String>reverseOrder());
 
@@ -189,6 +195,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Classroom classroom = ordered.get(id);
                 adapterList.add("Lokaal: " + classroom.getClassNumber() + "\n" + "Beschikbaarheid: " + classroom.getAvailability());
             }*/
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
 

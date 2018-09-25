@@ -80,7 +80,7 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //ERROR NO INTERNET
+                internet = false;
             }
         });
         requestQueue.add(jsonArrayRequest);

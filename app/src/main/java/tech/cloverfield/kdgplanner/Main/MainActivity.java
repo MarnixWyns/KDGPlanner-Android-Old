@@ -183,7 +183,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     long diff = classStartTime.getTime() - currentTime.getTime();
 
-                    adapterList.add("Lokaal: " + classroomDisplay + "\nBeschikbaarheid: " + (diff / (60 * 60 * 1000) % 24) + " uren en " + (diff / (60 * 1000) % 60) + " minuten (tot: " + DateFormatter.fixTimeString(classStartTime.getHours() + ":" + classStartTime.getMinutes()) + "u)");
+                    if (!((diff / (60 * 60 * 1000) % 24) == 0 && (diff / (60 * 1000) % 60) < 20)){
+                        adapterList.add("Lokaal: " + classroomDisplay + "\nBeschikbaarheid: " + (diff / (60 * 60 * 1000) % 24) + " uur en " + (diff / (60 * 1000) % 60) + " minuten (tot: " + DateFormatter.fixTimeString(classStartTime.getHours() + ":" + classStartTime.getMinutes()) + "u)");
+                    }
                  /*String id = classroom.getAvailability() + ";" + classroom.getClassNumber();
                 sort.add(id);
                 ordered.put(id, classroom);*/

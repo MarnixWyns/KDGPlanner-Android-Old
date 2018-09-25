@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
 import tech.cloverfield.kdgplanner.R;
@@ -38,7 +38,7 @@ import tech.cloverfield.kdgplanner.Reservation.ReservationActivity;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     public Button button;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    public SwipeRefreshLayout swipeRefreshLayout;
 
     private Spinner spinner;
     private Lokalen_DB lokalen_db;
@@ -77,17 +77,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         FloatingActionButton fab = findViewById(R.id.fabReservation);
         fab.setOnClickListener(fabOnClick);
 
-        lokalen_db = new Lokalen_DB(this);
-        //lokalen_db.drop();
-        //lokalen_db.create();
-        lokalen_db.update();
-
         swipeRefreshLayout = findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
 
-        Calendar calendar = Calendar.getInstance();
-        String time = DateFormatter.fixTimeString(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
-        displayAvailable(lokalen_db.getRooms(convertCampus(selectedCammpus), time), false);
+        lokalen_db = new Lokalen_DB(this);
+        lokalen_db.setForced(false);
+        lokalen_db.setRefreshing(false);
+        lokalen_db.update(convertCampus(selectedCammpus));
     }
 
     public boolean requestPermissions() {
@@ -157,8 +153,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void displayAvailable(ArrayList<Classroom> classrooms, boolean includeClassroom) {
         ListView classroomList = findViewById(R.id.lvClassrooms);
         ArrayList<String> adapterList = new ArrayList<>();
-        //ArrayList<String> sort = new ArrayList<>();
-        //HashMap<String, Classroom> ordered = new HashMap<>();
 
         if (classrooms.size() == 0) {
             adapterList.add("Vandaag geen lesactiviteiten");
@@ -183,23 +177,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     long diff = classStartTime.getTime() - currentTime.getTime();
 
-                    if (!((diff / (60 * 60 * 1000) % 24) == 0 && (diff / (60 * 1000) % 60) < 20)){
+                    if (!((diff / (60 * 60 * 1000) % 24) == 0 && (diff / (60 * 1000) % 60) < 20)) {
                         adapterList.add("Lokaal: " + classroomDisplay + "\nBeschikbaarheid: " + (diff / (60 * 60 * 1000) % 24) + " uur en " + (diff / (60 * 1000) % 60) + " minuten (tot: " + DateFormatter.fixTimeString(classStartTime.getHours() + ":" + classStartTime.getMinutes()) + "u)");
                     }
-                 /*String id = classroom.getAvailability() + ";" + classroom.getClassNumber();
-                sort.add(id);
-                ordered.put(id, classroom);*/
                 }
-
-            /*Collections.sort(sort, Collections.<String>reverseOrder());
-
-            for (String id : sort) {
-                Classroom classroom = ordered.get(id);
-                adapterList.add("Lokaal: " + classroom.getClassNumber() + "\n" + "Beschikbaarheid: " + classroom.getAvailability());
-            }*/
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+
         }
 
 
@@ -221,10 +206,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if (buttonText.contains(":")) time = buttonText;
         displayAvailable(lokalen_db.getRooms(convertCampus(selectedCammpus), time), false);
-        //Als het default text is probeer dan niet om CSV op te halen
-        /*if (!button.getText().equals("Kies uur")) {
-            Toast.makeText(this, spinner.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
-        }*/
     }
 
     @Override
@@ -235,17 +216,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            Toast toast = Toast.makeText(getApplicationContext(), "Please stand by,\nrefreshing database", Toast.LENGTH_SHORT);
-            toast.show();
+            if (lokalen_db.hasInternet()) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Please stand by,\nrefreshing database", Toast.LENGTH_SHORT);
+                toast.show();
 
-            swipeRefreshLayout.setRefreshing(false);
-            lokalen_db.update();
-            Calendar calendar = Calendar.getInstance();
-            String buttonText = (String) button.getText();
-            String time = DateFormatter.fixTimeString(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
+                lokalen_db.setForced(true);
+                lokalen_db.setRefreshing(true);
+                lokalen_db.update(convertCampus(selectedCammpus));
+                Calendar calendar = Calendar.getInstance();
+                String buttonText = (String) button.getText();
+                String time = DateFormatter.fixTimeString(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
 
-            if (buttonText.contains(":")) time = buttonText;
-            displayAvailable(lokalen_db.getRooms(convertCampus(selectedCammpus), time), false);
+                if (buttonText.contains(":")) time = buttonText;
+                displayAvailable(lokalen_db.getRooms(convertCampus(selectedCammpus), time), false);
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "Error while connecting to the server,\nplease check your connection or try again later", Toast.LENGTH_SHORT);
+                toast.show();
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     };
 }

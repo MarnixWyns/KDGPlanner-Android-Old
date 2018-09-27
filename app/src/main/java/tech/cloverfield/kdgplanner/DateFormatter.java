@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-import tech.cloverfield.kdgplanner.Main.DateType;
+import tech.cloverfield.kdgplanner.Objects.DateType;
 
 public class DateFormatter {
 

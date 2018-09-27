@@ -2,14 +2,11 @@ package tech.cloverfield.kdgplanner.Main;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,12 +18,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
+import tech.cloverfield.kdgplanner.Objects.Classroom;
 
 public class Lokalen_DB extends SQLiteOpenHelper {
 

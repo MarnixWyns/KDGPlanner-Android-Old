@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +27,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
+import tech.cloverfield.kdgplanner.Objects.Classroom;
+import tech.cloverfield.kdgplanner.Objects.DateType;
 import tech.cloverfield.kdgplanner.R;
 import tech.cloverfield.kdgplanner.Reservation.ReservationActivity;
 
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         lokalen_db = new Lokalen_DB(this);
         lokalen_db.setForced(false);
         lokalen_db.setRefreshing(false);
+
         lokalen_db.update(convertCampus(selectedCammpus));
     }
 

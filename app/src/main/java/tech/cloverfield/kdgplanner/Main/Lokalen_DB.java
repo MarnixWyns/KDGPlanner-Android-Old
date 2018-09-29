@@ -20,12 +20,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
+import tech.cloverfield.kdgplanner.Objects.Campus;
 import tech.cloverfield.kdgplanner.Objects.Classroom;
 
 public class Lokalen_DB extends SQLiteOpenHelper {
 
+    private HashMap<String, Campus> campussen = new HashMap<>();
     private boolean internet = true;
     private boolean loaded = false;
     private boolean force = false;
@@ -49,6 +52,18 @@ public class Lokalen_DB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS Lokalen");
         onCreate(db);
+    }
+
+    private void load() {
+        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen", null);
+        /*contentValues.put("ID", ID);
+        contentValues.put("Campus", Campus);
+        contentValues.put("Classroom", Classroom.replace(" ", ""));
+        contentValues.put("Start_Time", Start_Time);
+        contentValues.put("End_Time", End_Time);
+        contentValues.put("Date", Date);*/
+
+
     }
 
     @SuppressLint("StaticFieldLeak")

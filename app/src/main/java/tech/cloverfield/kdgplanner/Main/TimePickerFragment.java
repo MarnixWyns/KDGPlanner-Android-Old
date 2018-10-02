@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.widget.TimePicker;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
 import tech.cloverfield.kdgplanner.Objects.Classroom;
+import tech.cloverfield.kdgplanner.Objects.DateType;
 
 public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
@@ -27,18 +29,15 @@ public class TimePickerFragment extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         MainActivity mainActivity = (MainActivity) getActivity();
-        String time = DateFormatter.fixTimeString(hourOfDay + ":" + minute);
-        mainActivity.button.setText(time);
-
         Calendar cal = Calendar.getInstance();
-        String rawDateValue = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH);
-        String dateValue = DateFormatter.fixDateString(rawDateValue);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cal.set(Calendar.MINUTE, minute);
+        Date time = cal.getTime();
+
+        mainActivity.button.setText(String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
 
         ArrayList<Classroom> available = new ArrayList<>();
-        for (Classroom classroom : mainActivity.getLokalen_db().getRooms(mainActivity.convertCampus(mainActivity.getSelectedCampus()), time)) {
-            available.add(classroom);
-        }
-
+        available.addAll(mainActivity.getLokalen_db().getRooms(mainActivity.convertCampus(mainActivity.getSelectedCampus()), time));
         mainActivity.displayAvailable(available, false);
     }
 }

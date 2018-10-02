@@ -4,8 +4,8 @@ import android.annotation.SuppressLint;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
 import tech.cloverfield.kdgplanner.Objects.DateType;
 
@@ -18,7 +18,8 @@ public class DateFormatter {
 
             if (type == DateType.TIME) template = new SimpleDateFormat("kk:mm");
             else if (type == DateType.DATE) template = new SimpleDateFormat("yyyy-MM-dd");
-            else if (type == DateType.FULL_DATE) template = new SimpleDateFormat("EEEE d MMMM yyyy kk:mm");
+            else if (type == DateType.FULL_DATE_US) template = new SimpleDateFormat("kk:mm:ss yyyy-MM-dd");
+            else if (type == DateType.FULL_DATE_BE) template = new SimpleDateFormat("kk:mm:ss dd-MM-yyyy");
             else return null;
 
             return template.parse(input);
@@ -28,45 +29,19 @@ public class DateFormatter {
         }
     }
 
-    public static String fixDateString(String date) {
-        String newDate = "";
-        String[] split = date.split("-");
-        newDate += fix0(Integer.parseInt(split[0]));
-        newDate += "-";
-        newDate += fix0(Integer.parseInt(split[1]));
-        newDate += "-";
-        newDate += fix0(Integer.parseInt(split[2]));
-        return newDate;
-    }
-
-    public static String fixTimeString(String time) {
-        String newTime = "";
-        String[] split = time.split(":");
-        newTime += fix0(Integer.parseInt(split[0]));
-        newTime += ":";
-        newTime += fix0(Integer.parseInt(split[1]));
-        return newTime;
-    }
-
-    public static String fix0(int input) {
-        if (input >= 10) {
-            return String.valueOf(input);
-        } else {
-            return "0" + String.valueOf(input);
+    public static String decode(Date date, DateType type) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        String fixed = "";
+        if (type == DateType.TIME) {
+            fixed = String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+        } else if (type == DateType.DATE) {
+            fixed = String.format("%02d-%02d-%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        } else if (type == DateType.FULL_DATE_BE) {
+            fixed = String.format("%02d:%02d %02d-%02d-%04d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        } else if (type == DateType.FULL_DATE_US) {
+            fixed = String.format("%02d:%02d %04d-%02d-%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
         }
+        return fixed;
     }
-
-    public static String translate(String input, HashMap translation) {
-        String returnString = input;
-        for (int i = 0; i < translation.keySet().size(); i++) {
-            String key = (String) translation.keySet().toArray()[i];
-            String value = (String) translation.get(key);
-
-            if (returnString.contains(key)) {
-                returnString = returnString.replaceAll(key, value);
-            }
-        }
-
-        return returnString;
-    }
-}
+ }

@@ -2,6 +2,7 @@ package tech.cloverfield.kdgplanner.Objects;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Classroom {
@@ -14,24 +15,22 @@ public class Classroom {
         this.identifier = identifier;
     }
 
-    public void addUur(Date start, Date end) {
-        uurLijst.add(new Uur(start, end));
-    }
-
-    public ArrayList<Uur> getUren() {
-        return uurLijst;
+    public void addUur(Uur uur) {
+        uurLijst.add(uur);
     }
 
     public boolean isAvailable(Date date) {
         for (int i = 0; i < uurLijst.size(); i++) {
-            if (uurLijst.get(i).getEnd().before(date)) {
-                if (uurLijst.size() == i) {
-                    return setAvailability(date, null);
+            Date endDate = uurLijst.get(i).getEnd();
+            if (endDate.before(date)) {
+                if (uurLijst.size() == (i + 1)) {
+                    if (setAvailability(date, null)) return true;
                 } else {
-                    if (uurLijst.get(i + 1).getStart().after(date)) {
-                        return setAvailability(date, uurLijst.get(i + 1).getStart());
+                    Date startUur = uurLijst.get(i + 1).getStart();
+                    if (startUur.after(date)) {
+                        if (setAvailability(date, startUur)) return true;
                     } else {
-                        return setAvailability(null, null);
+                        if (setAvailability(null, null)) return true;
                     }
                 }
             }
@@ -40,23 +39,25 @@ public class Classroom {
     }
 
     public boolean setAvailability(Date huidigeTijd, Date endUur) {
-        if (huidigeTijd == null && endUur == null) {
+        if (huidigeTijd == null) {
             return false;
         } else if (endUur == null) {
             duration = "Voor de rest van de dag";
             return true;
         } else {
-            long diff = huidigeTijd.getTime() - endUur.getTime();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(endUur);
+            long diff = endUur.getTime() - huidigeTijd.getTime();
 
             if (!((diff / (60 * 60 * 1000) % 24) == 0 && (diff / (60 * 1000) % 60) < 20)) {
                 if ((diff / (60 * 60 * 1000) % 24) == 0) {
-                    duration = String.format("%s minuten", diff / (60 * 1000) % 60);
+                    duration = String.format("%d minuten (tot %02d:%02d)", diff / (60 * 1000) % 60, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
                     return true;
                 } else if ((diff / (60 * 1000) % 60) == 0) {
-                    duration = String.format("%s uur", diff / (60 * 60 * 1000) % 24);
+                    duration = String.format("%d uur (tot %02d:%02d)", diff / (60 * 60 * 1000) % 24, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
                     return true;
                 } else {
-                    duration = String.format("%s uur en %s minuten", diff / (60 * 1000) % 60, diff / (60 * 1000) % 60);
+                    duration = String.format("%d uur en %s minuten (tot %02d:%02d)", diff / (60 * 1000) % 60, diff / (60 * 1000) % 60, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
                     return true;
                 }
             } else {
@@ -67,5 +68,9 @@ public class Classroom {
 
     public String getDuration() {
         return this.duration;
+    }
+
+    public String getIdentifier() {
+        return this.identifier;
     }
 }

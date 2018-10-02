@@ -1,23 +1,24 @@
 package tech.cloverfield.kdgplanner.Objects;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 
 public class Datum {
 
-    private Date date;
-    private ArrayList<Classroom> classrooms = new ArrayList<>();
+    private HashMap<String, Classroom> classrooms = new HashMap<>();
 
-    public Datum(Date date) {
-        this.date = date;
-    }
-
-    public void addClassroom(Classroom room) {
-        this.classrooms.add(room);
+    public void addUur(String identifier, Uur uur) {
+        Classroom classroom = classrooms.get(identifier);
+        if (classroom != null) {
+        } else {
+            classroom = new Classroom(identifier);
+        }
+        classroom.addUur(uur);
+        this.classrooms.put(classroom.getIdentifier(), classroom);
     }
 
     public ArrayList<Classroom> getClassrooms() {
-        return this.classrooms;
+        return new ArrayList<>(this.classrooms.values());
     }
 
 }

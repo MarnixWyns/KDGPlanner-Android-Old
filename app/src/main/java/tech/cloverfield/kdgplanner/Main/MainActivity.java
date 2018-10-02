@@ -19,8 +19,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,10 +29,6 @@ import tech.cloverfield.kdgplanner.Objects.Classroom;
 import tech.cloverfield.kdgplanner.Objects.DateType;
 import tech.cloverfield.kdgplanner.R;
 import tech.cloverfield.kdgplanner.Reservation.ReservationActivity;
-
-
-//TODO: Option to sync/obtain CSV from interwebs
-
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -58,12 +52,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void permissionGranted() {
-        // Populate campusses
-        campusTranslator.put("groenplaats", "gr");
-        campusTranslator.put("pothoek", "ph");
-        campusTranslator.put("stadswaag", "sw");
+        campusTranslator.put("groenplaats", "GR");
+        campusTranslator.put("pothoek", "PH");
+        campusTranslator.put("stadswaag", "SW");
 
-        // Get items from resources string array and put them in spinner values.
         spinner = findViewById(R.id.spinnerMain);
         spinner.setOnItemSelectedListener(this);
 
@@ -83,8 +75,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         lokalen_db = new Lokalen_DB(this);
         lokalen_db.setForced(false);
-        lokalen_db.setRefreshing(false);
-
         lokalen_db.update(convertCampus(selectedCammpus));
     }
 
@@ -108,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 permissionGranted();
             } else {
-                Toast.makeText(this, "Permission required.", Toast.LENGTH_SHORT).show();
+                displayWarning("Permission required.");
                 System.exit(0);
             }
         }
@@ -138,10 +128,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private View.OnClickListener btnOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!lokalen_db.hasInternet()) {
-                Snackbar.make(findViewById(R.id.coordinator), "De database kon niet worden geladen. Controleer uw internet verbinding of probeer het later opnieuw.", Snackbar.LENGTH_SHORT).show();
-            } else if (!lokalen_db.isLoaded()) {
-                Snackbar.make(findViewById(R.id.coordinator), "De database is nog niet geladen... even geduld.", Snackbar.LENGTH_SHORT).show();
+            if (!lokalen_db.isLoaded()) {
+                Snackbar.make(findViewById(R.id.coordinator), String.format("De database is nog niet geladen... even geduld. (%s)", lokalen_db.getLoadedPercentage()), Snackbar.LENGTH_SHORT).show();
+            } else if (!lokalen_db.isLoaded() && !lokalen_db.hasInternet()) {
+                    Snackbar.make(findViewById(R.id.coordinator), "De database kon niet worden geladen. Controleer uw internet verbinding of probeer het later opnieuw.", Snackbar.LENGTH_SHORT).show();
             } else {
                 DialogFragment dialog = new TimePickerFragment();
                 dialog.show(getFragmentManager(), "timePicker");
@@ -151,42 +141,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     };
 
-
     public void displayAvailable(ArrayList<Classroom> classrooms, boolean includeClassroom) {
         ListView classroomList = findViewById(R.id.lvClassrooms);
         ArrayList<String> adapterList = new ArrayList<>();
 
-        if (classrooms.size() == 0) {
+        if (classrooms == null) {
+            adapterList.add("Selecteer alstublief een uur");
+        } else if (classrooms.size() == 0) {
             adapterList.add("Vandaag geen lesactiviteiten");
         } else {
-            try {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date currentTime = simpleDateFormat.parse("1970-01-01");
-                currentTime.setHours(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-                currentTime.setMinutes(Calendar.getInstance().get(Calendar.MINUTE));
-
                 for (Classroom classroom : classrooms) {
-                    Date classStartTime = DateFormatter.toDate(classroom.getStartHour(), DateType.TIME);
+                    String classroomDisplay = "";
 
-                    String buttonText = (String) button.getText();
-                    String classroomDisplay = classroom.getClassNumber();
                     if (includeClassroom)
-                        classroomDisplay += " (" + convertCampus(selectedCammpus) + ")";
+                        classroomDisplay += String.format("Campus: %s\n" + convertCampus(selectedCammpus));
 
-                    if (buttonText.contains(":")) {
-                        currentTime = DateFormatter.toDate(buttonText, DateType.TIME);
-                    }
+                    classroomDisplay += String.format("Lokaal: %s\nBeschikbaarheid: %s", classroom.getIdentifier(), classroom.getDuration());
 
-                    long diff = classStartTime.getTime() - currentTime.getTime();
-
-                    if (!((diff / (60 * 60 * 1000) % 24) == 0 && (diff / (60 * 1000) % 60) < 20)) {
-                        adapterList.add("Lokaal: " + classroomDisplay + "\nBeschikbaarheid: " + (diff / (60 * 60 * 1000) % 24) + " uur en " + (diff / (60 * 1000) % 60) + " minuten (tot: " + DateFormatter.fixTimeString(classStartTime.getHours() + ":" + classStartTime.getMinutes()) + "u)");
-                    }
+                    adapterList.add(classroomDisplay);
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
         }
 
 
@@ -194,20 +167,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         classroomList.setAdapter(adapter);
     }
 
-
-    /*public CSVReader getReader() {
-        return reader;
-    }*/
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         selectedCammpus = spinner.getSelectedItem().toString();
         Calendar calendar = Calendar.getInstance();
         String buttonText = (String) button.getText();
-        String time = DateFormatter.fixTimeString(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
 
-        if (buttonText.contains(":")) time = buttonText;
-        displayAvailable(lokalen_db.getRooms(convertCampus(selectedCammpus), time), false);
+        if (buttonText.contains(":")) {
+            Date date = DateFormatter.toDate(String.format("%s:00 %04d-%02d-%02d", buttonText, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US);
+            displayAvailable(lokalen_db.getRooms(convertCampus(selectedCammpus), date), false);
+        } else {
+            displayAvailable(null, false);
+        }
     }
 
     @Override
@@ -215,28 +186,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Auto generated stub
     }
 
+    public void displayWarning(String warning) {
+        Toast toast = Toast.makeText(getApplicationContext(), warning, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
     private SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            if (lokalen_db.hasInternet()) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Please stand by,\nrefreshing database", Toast.LENGTH_SHORT);
-                toast.show();
-
-                lokalen_db.setForced(true);
-                lokalen_db.setRefreshing(true);
-                lokalen_db.update(convertCampus(selectedCammpus));
-                Calendar calendar = Calendar.getInstance();
-                String buttonText = (String) button.getText();
-                String time = DateFormatter.fixTimeString(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
-
-                if (buttonText.contains(":")) time = buttonText;
-                displayAvailable(lokalen_db.getRooms(convertCampus(selectedCammpus), time), false);
-            } else {
-                Toast toast = Toast.makeText(getApplicationContext(), "Error while connecting to the server,\nplease check your connection or try again later", Toast.LENGTH_SHORT);
-                toast.show();
-
-                swipeRefreshLayout.setRefreshing(false);
-            }
+            swipeRefreshLayout.setRefreshing(true);
+            lokalen_db.setForced(true);
+            lokalen_db.update(convertCampus(selectedCammpus));
+            displayWarning("Please stand by,\nrefreshing database");
         }
     };
 }

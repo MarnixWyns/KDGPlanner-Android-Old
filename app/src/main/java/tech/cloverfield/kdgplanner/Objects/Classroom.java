@@ -11,7 +11,6 @@ public class Classroom implements Comparable {
     private String identifier;
     private ArrayList<Uur> uurLijst = new ArrayList<>();
     private String duration;
-    private boolean wholeDay = false;
     private String durationSort;
 
     public Classroom(String identifier) {
@@ -52,10 +51,8 @@ public class Classroom implements Comparable {
         } else if (endUur == null) {
             duration = "Voor de rest van de dag";
             durationSort = duration;
-            wholeDay = true;
             return true;
         } else {
-            wholeDay = false;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(endUur);
             long diff = endUur.getTime() - huidigeTijd.getTime();

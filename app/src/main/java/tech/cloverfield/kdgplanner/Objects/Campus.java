@@ -1,6 +1,7 @@
 package tech.cloverfield.kdgplanner.Objects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -35,6 +36,7 @@ public class Campus {
         for (Classroom classroom : datesList.get(queryDate).getClassrooms()) {
             if (classroom.isAvailable(date)) classrooms.add(classroom);
         }
+        Collections.sort(classrooms);
         return classrooms;
     }
 

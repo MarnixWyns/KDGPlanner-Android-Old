@@ -1,6 +1,8 @@
 package tech.cloverfield.kdgplanner.Objects;
 
+import android.os.Debug;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,8 +26,10 @@ public class Classroom implements Comparable {
     public boolean isAvailable(Date date) {
         for (int i = 0; i < uurLijst.size(); i++) {
             Date endDate = uurLijst.get(i).getEnd();
-            if (i == 0 && i == uurLijst.size() - 1) {
+            Log.d(this.identifier, "End| " + endDate.getHours()+":"+endDate.getMinutes());
+            if (i == 0) {
                 Date startUur = uurLijst.get(i).getStart();
+                Log.d(this.identifier, "Start| " + startUur.getHours()+":"+startUur.getMinutes());
                 if (startUur.after(date)) {
                     if (setAvailability(date, startUur)) return true;
                 }
@@ -34,6 +38,7 @@ public class Classroom implements Comparable {
                     if (setAvailability(date, null)) return true;
                 } else {
                     Date startUur = uurLijst.get(i + 1).getStart();
+                    Log.d(this.identifier, "Start| " + startUur.getHours()+":"+startUur.getMinutes());
                     if (startUur.after(date)) {
                         if (setAvailability(date, startUur)) return true;
                     } else {

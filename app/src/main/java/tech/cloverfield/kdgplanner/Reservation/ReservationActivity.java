@@ -162,7 +162,7 @@ public class ReservationActivity extends AppCompatActivity {
             try {
                 startActivity(Intent.createChooser(i, "Send mail..."));
             } catch (android.content.ActivityNotFoundException ex) {
-                Toast.makeText(ReservationActivity.this, "Er zijn geen mail clients geinstalleerd", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ReservationActivity.this, R.string.error_no_mail_client, Toast.LENGTH_SHORT).show();
             }
             //endregion
         }

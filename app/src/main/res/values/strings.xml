@@ -1,10 +1,18 @@
 <resources>
-    <string name="app_name">KDG Planner</string>
+    <string name="app_name" translatable="false">KDG Planner</string>
+    <string name="server_connect_error">Error while connecting to the server, please check your connection or try again later</string>
+    <string name="info_refreshing_db">Please stand by, refreshing database</string>
 
     <string-array name="campussen">
         <item>Groenplaats</item>
         <item>Pothoek</item>
         <item>Stadswaag</item>
     </string-array>
+    <string name="init_select_hour">Please select an hour</string>
+    <string name="no_lessons_today">There are no lessons today</string>
+    <string name="error_perm_required">Permission required.</string>
+    <string name="db_init_load">The database isn\'t loaded yet, please stand by... (%s)</string>
+    <string name="error_no_mail_client">There are no mail clients installed</string>
+    <string name="class_availability">Class: %s Availability: %s</string>
 
 </resources>

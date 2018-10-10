@@ -29,6 +29,7 @@ public class DateFormatter {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     public static String decode(Date date, DateType type) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);

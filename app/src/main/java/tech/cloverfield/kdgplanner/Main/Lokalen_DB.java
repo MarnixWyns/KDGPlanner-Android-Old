@@ -28,6 +28,7 @@ import tech.cloverfield.kdgplanner.Objects.Campus;
 import tech.cloverfield.kdgplanner.Objects.Classroom;
 import tech.cloverfield.kdgplanner.Objects.DateType;
 import tech.cloverfield.kdgplanner.Objects.Uur;
+import tech.cloverfield.kdgplanner.R;
 
 public class Lokalen_DB extends SQLiteOpenHelper {
 
@@ -85,7 +86,7 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                 if (objects[0] == null) {
                     internet = false;
                     isUpdating = false;
-                    if ((!loaded && !force) || force) context.displayWarning("Error while connecting to the server,\nplease check your connection or try again later");
+                    if ((!loaded && !force) || force) context.displayWarning(context.getString(R.string.server_connect_error));
                 } else {
                     campussen = new HashMap<>();
                     JSONArray jsonArray = (JSONArray) objects[0];

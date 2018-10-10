@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private Spinner spinner;
     private Lokalen_DB lokalen_db;
-    private String selectedCammpus = "Groenplaats";
+    private String selectedCampus = "Groenplaats";
     private HashMap<String, String> campusTranslator = new HashMap<>();
 
     private int PERMISSION_KEY = 64556;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         lokalen_db = new Lokalen_DB(this);
         lokalen_db.setForced(false);
-        lokalen_db.update(convertCampus(selectedCammpus));
+        lokalen_db.update(convertCampus(selectedCampus));
     }
 
     public boolean requestPermissions() {
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 permissionGranted();
             } else {
-                displayWarning("Permission required.");
+                displayWarning(getString(R.string.error_perm_required));
                 System.exit(0);
             }
         }
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public String getSelectedCampus() {
-        return selectedCammpus;
+        return selectedCampus;
     }
 
     private View.OnClickListener fabOnClick = new View.OnClickListener() {
@@ -129,9 +129,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void onClick(View v) {
             if (!lokalen_db.isLoaded()) {
-                Snackbar.make(findViewById(R.id.coordinator), String.format("De database is nog niet geladen... even geduld. (%s)", lokalen_db.getLoadedPercentage()), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.coordinator), String.format(getString(R.string.db_init_load), lokalen_db.getLoadedPercentage()), Snackbar.LENGTH_SHORT).show();
             } else if (!lokalen_db.isLoaded() && !lokalen_db.hasInternet()) {
-                    Snackbar.make(findViewById(R.id.coordinator), "De database kon niet worden geladen. Controleer uw internet verbinding of probeer het later opnieuw.", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.coordinator), getString(R.string.server_connect_error), Snackbar.LENGTH_SHORT).show();
             } else {
                 DialogFragment dialog = new TimePickerFragment();
                 dialog.show(getFragmentManager(), "timePicker");
@@ -146,17 +146,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ArrayList<String> adapterList = new ArrayList<>();
 
         if (classrooms == null) {
-            adapterList.add("Selecteer alstublief een uur");
+            adapterList.add(getString(R.string.init_select_hour));
         } else if (classrooms.size() == 0) {
-            adapterList.add("Vandaag geen lesactiviteiten");
+            adapterList.add(getString(R.string.no_lessons_today));
         } else {
                 for (Classroom classroom : classrooms) {
                     String classroomDisplay = "";
 
                     if (includeClassroom)
-                        classroomDisplay += String.format("Campus: %s\n" + convertCampus(selectedCammpus));
+                        classroomDisplay += String.format("Campus: %s\n" + convertCampus(selectedCampus));
 
-                    classroomDisplay += String.format("Lokaal: %s\nBeschikbaarheid: %s", classroom.getIdentifier(), classroom.getDuration());
+                    classroomDisplay += String.format(getString(R.string.class_availability), classroom.getIdentifier(), classroom.getDuration());
 
                     adapterList.add(classroomDisplay);
                 }
@@ -169,13 +169,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        selectedCammpus = spinner.getSelectedItem().toString();
+        selectedCampus = spinner.getSelectedItem().toString();
         Calendar calendar = Calendar.getInstance();
         String buttonText = (String) button.getText();
 
         if (buttonText.contains(":")) {
             Date date = DateFormatter.toDate(String.format("%s:00 %04d-%02d-%02d", buttonText, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US);
-            displayAvailable(lokalen_db.getRooms(convertCampus(selectedCammpus), date), false);
+            displayAvailable(lokalen_db.getRooms(convertCampus(selectedCampus), date), false);
         } else {
             displayAvailable(null, false);
         }
@@ -196,8 +196,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         public void onRefresh() {
             swipeRefreshLayout.setRefreshing(true);
             lokalen_db.setForced(true);
-            lokalen_db.update(convertCampus(selectedCammpus));
-            displayWarning("Please stand by,\nrefreshing database");
+            lokalen_db.update(convertCampus(selectedCampus));
+            displayWarning(getString(R.string.info_refreshing_db));
         }
     };
 }

@@ -1,5 +1,6 @@
 package tech.cloverfield.kdgplanner.Objects;
 
+import android.annotation.SuppressLint;
 import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -50,7 +51,8 @@ public class Classroom implements Comparable {
         return setAvailability(null, null);
     }
 
-    public boolean setAvailability(Date huidigeTijd, Date endUur) {
+    @SuppressLint("DefaultLocale")
+    private boolean setAvailability(Date huidigeTijd, Date endUur) {
         if (huidigeTijd == null) {
             return false;
         } else if (endUur == null) {

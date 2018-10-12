@@ -1,5 +1,6 @@
 package tech.cloverfield.kdgplanner.Main;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
@@ -27,16 +28,19 @@ public class TimePickerFragment extends DialogFragment
         return new TimePickerDialog(getActivity(), this, hour, minute, true);
     }
 
+    @SuppressLint("DefaultLocale")
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         MainActivity mainActivity = (MainActivity) getActivity();
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         Date time = cal.getTime();
 
         mainActivity.button.setText(String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
 
         ArrayList<Classroom> available = new ArrayList<>(mainActivity.getLokalen_db().getRooms(mainActivity.convertCampus(mainActivity.getSelectedCampus()), time));
-        mainActivity.displayAvailable(available, false);
+        mainActivity.displayAvailable(available);
     }
 }

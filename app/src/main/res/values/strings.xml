@@ -8,11 +8,14 @@
         <item>Pothoek</item>
         <item>Stadswaag</item>
     </string-array>
-    <string name="init_select_hour">Please select an hour</string>
+    <string name="init_select_hour">Please select a time</string>
     <string name="no_lessons_today">There are no lessons today</string>
     <string name="error_perm_required">Permission required.</string>
-    <string name="db_init_load">The database isn\'t loaded yet, please stand by... (%s)</string>
+    <string name="db_init_load">The database is still loading, please stand by… (%s)</string>
     <string name="error_no_mail_client">There are no mail clients installed</string>
-    <string name="class_availability">Class: %s Availability: %s</string>
-
+    <string name="class_availability">Class: %s%nAvailability: %s</string>
+    <string name="minutes_until">%d minute(s) (until %02d:%02d)</string>
+    <string name="hours_until">%d hour(s) (until %02d:%02d)</string>
+    <string name="hours_minutes_until">%d hour(s) and %d minute(s) (until %02d:%02d)</string>
+    <string name="rest_of_the_day">For the remainder of the day</string>
 </resources>

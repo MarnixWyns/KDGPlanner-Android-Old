@@ -1,7 +1,9 @@
 package tech.cloverfield.kdgplanner.Main;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     };
 
-    public void displayAvailable(ArrayList<Classroom> classrooms, boolean includeClassroom) {
+    public void displayAvailable(ArrayList<Classroom> classrooms) {
         ListView classroomList = findViewById(R.id.lvClassrooms);
         ArrayList<String> adapterList = new ArrayList<>();
 
@@ -152,9 +154,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else {
                 for (Classroom classroom : classrooms) {
                     String classroomDisplay = "";
-
-                    if (includeClassroom)
-                        classroomDisplay += String.format("Campus: %s\n" + convertCampus(selectedCampus));
 
                     classroomDisplay += String.format(getString(R.string.class_availability), classroom.getIdentifier(), classroom.getDuration());
 
@@ -167,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         classroomList.setAdapter(adapter);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         selectedCampus = spinner.getSelectedItem().toString();
@@ -174,10 +174,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String buttonText = (String) button.getText();
 
         if (buttonText.contains(":")) {
-            Date date = DateFormatter.toDate(String.format("%s:00 %04d-%02d-%02d", buttonText, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US);
-            displayAvailable(lokalen_db.getRooms(convertCampus(selectedCampus), date), false);
+            Date date = DateFormatter.toDate(String.format("%s:00.000 %04d-%02d-%02d", buttonText, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US);
+            displayAvailable(lokalen_db.getRooms(convertCampus(selectedCampus), date));
         } else {
-            displayAvailable(null, false);
+            displayAvailable(null);
         }
     }
 

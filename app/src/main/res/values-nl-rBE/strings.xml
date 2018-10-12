@@ -4,8 +4,12 @@
     <string name="init_select_hour">Gelieve een uur te selecteren</string>
     <string name="no_lessons_today">Vandaag geen lesactiviteiten</string>
     <string name="info_refreshing_db">Gelieve even te wachten, we zijn de database aan het updaten</string>
-    <string name="db_init_load">De database is nog niet geladen... even geduld. (%s)</string>
+    <string name="db_init_load">De database is nog niet geladen… even geduld. (%s)</string>
     <string name="error_no_mail_client">Er zijn geen mail clients geinstalleerd</string>
-    <string name="class_availability">Lokaal: %s Beschikbaarheid: %s</string>
+    <string name="class_availability">Lokaal: %s%nBeschikbaarheid: %s</string>
     <string name="error_perm_required">Toestemming vereist.</string>
+    <string name="minutes_until">%d minuten (tot %02d:%02d)</string>
+    <string name="hours_until">%d uur (tot %02d:%02d)</string>
+    <string name="hours_minutes_until">%d uur en %s minuten (tot %02d:%02d)</string>
+    <string name="rest_of_the_day">Voor de rest van de dag</string>
 </resources>

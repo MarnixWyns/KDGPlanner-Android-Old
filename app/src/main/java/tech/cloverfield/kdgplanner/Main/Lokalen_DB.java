@@ -59,13 +59,15 @@ public class Lokalen_DB extends SQLiteOpenHelper {
     }
 
     private void populateStorageClass(String campusInitials, String classroomID, String startTime, String endTime, String date) {
+        startTime += ".000";
+        endTime += ".000";
         Date startDate = DateFormatter.toDate(String.format("%s %s", startTime, date), DateType.FULL_DATE_US);
         Date endDate = DateFormatter.toDate(String.format("%s %s", endTime, date), DateType.FULL_DATE_US);
 
         Campus campus = campussen.get(campusInitials);
         if (campus == null) campus = new Campus(campusInitials);
         Uur uur = new Uur(startDate, endDate);
-        campus.addUur(classroomID, startDate, uur);
+        campus.addUur(classroomID, startDate, uur, context);
         campussen.put(campusInitials, campus);
     }
 
@@ -120,7 +122,7 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                         if (objects[0] != null && force) {
                             if (context.button.getText().toString().contains(":")) {
                                 Calendar calendar = Calendar.getInstance();
-                                context.displayAvailable(getRooms(context.convertCampus(context.getSelectedCampus()), DateFormatter.toDate(String.format("%s:00 %04d-%02d-%02d", context.button.getText().toString(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US)), false);
+                                context.displayAvailable(getRooms(context.convertCampus(context.getSelectedCampus()), DateFormatter.toDate(String.format("%s:00.000 %04d-%02d-%02d", context.button.getText().toString(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US)));
                             }
                             context.displayWarning("The classrooms are now up-to-date");
                         }

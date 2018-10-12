@@ -16,10 +16,13 @@ public class DateFormatter {
         try {
             DateFormat template;
 
-            if (type == DateType.TIME) template = new SimpleDateFormat("kk:mm");
+            if (type == DateType.TIME) {
+                input += ":00.000";
+                template = new SimpleDateFormat("kk:mm:ss.SSS");
+            }
             else if (type == DateType.DATE) template = new SimpleDateFormat("yyyy-MM-dd");
-            else if (type == DateType.FULL_DATE_US) template = new SimpleDateFormat("kk:mm:ss yyyy-MM-dd");
-            else if (type == DateType.FULL_DATE_BE) template = new SimpleDateFormat("kk:mm:ss dd-MM-yyyy");
+            else if (type == DateType.FULL_DATE_US) template = new SimpleDateFormat("kk:mm:ss.SSS yyyy-MM-dd");
+            else if (type == DateType.FULL_DATE_BE) template = new SimpleDateFormat("kk:mm:ss.SSS dd-MM-yyyy");
             else return null;
 
             return template.parse(input);

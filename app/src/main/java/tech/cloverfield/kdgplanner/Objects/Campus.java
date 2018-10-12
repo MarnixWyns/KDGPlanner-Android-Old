@@ -1,5 +1,7 @@
 package tech.cloverfield.kdgplanner.Objects;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -21,11 +23,11 @@ public class Campus {
         return initials;
     }
 
-    public void addUur(String identifier, Date date, Uur uur) {
+    public void addUur(String identifier, Date date, Uur uur, Context context) {
         String queryDate = DateFormatter.decode(date, DateType.DATE);
         Datum datum = datesList.get(queryDate);
         if (datum == null) datum = new Datum();
-        datum.addUur(identifier, uur);
+        datum.addUur(identifier, uur, context);
         datesList.put(queryDate, datum);
     }
 

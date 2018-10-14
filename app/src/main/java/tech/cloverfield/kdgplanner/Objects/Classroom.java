@@ -29,18 +29,21 @@ public class Classroom implements Comparable {
     public boolean isAvailable(Date date) {
         for (int i = 0; i < uurLijst.size(); i++) {
             Date endDate = uurLijst.get(i).getEnd();
-            if (i == 0) {
-                Date startUur = uurLijst.get(i).getStart();
-                if (startUur.after(date)) {
-                    if (setAvailability(date, startUur)) return true;
-                }
-            } if (endDate.before(date)) {
-                if (uurLijst.size() == (i + 1)) {
+            Date startDate = uurLijst.get(i).getStart();
+
+            if (i == uurLijst.size() - 1) {
+                if (date.after(endDate)) {
                     if (setAvailability(date, null)) return true;
-                } else {
-                    Date startUur = uurLijst.get(i + 1).getStart();
-                    if (startUur.after(date)) {
-                        if (setAvailability(date, startUur)) return true;
+                }
+            } else {
+                if (i == 0) {
+                    if (date.before(startDate)) {
+                        if (setAvailability(date, startDate))  return true;
+                    }
+                } else if (date.after(endDate)) {
+                    startDate = uurLijst.get(i + 1).getStart();
+                    if (date.before(startDate)) {
+                        if (setAvailability(date, startDate)) return true;
                     }
                 }
             }
@@ -61,7 +64,7 @@ public class Classroom implements Comparable {
             calendar.setTime(endUur);
             long diff = endUur.getTime() - huidigeTijd.getTime();
 
-            if (!((diff / (60 * 60 * 1000) % 24) == 0 && (diff / (60 * 1000) % 60) < 20)) {
+            if ((diff / (60 * 60 * 1000) % 24) > 0 || (diff / (60 * 1000) % 60) > 20) {
                 durationSort = String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
                 if ((diff / (60 * 60 * 1000) % 24) == 0) {
                     duration = String.format(context.getString(R.string.minutes_until), diff / (60 * 1000) % 60, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));

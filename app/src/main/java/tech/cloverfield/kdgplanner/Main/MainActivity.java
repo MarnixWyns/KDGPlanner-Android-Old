@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
 
         lokalen_db = new Lokalen_DB(this);
-        lokalen_db.setForced(false);
+        //Refreshing ON
         lokalen_db.update(convertCampus(selectedCampus));
     }
 
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void onRefresh() {
             swipeRefreshLayout.setRefreshing(true);
-            lokalen_db.setForced(true);
+            //Refreshing ON
             lokalen_db.update(convertCampus(selectedCampus));
             displayWarning(getString(R.string.info_refreshing_db));
         }

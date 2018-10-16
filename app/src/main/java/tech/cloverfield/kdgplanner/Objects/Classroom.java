@@ -39,6 +39,9 @@ public class Classroom implements Comparable {
                 if (i == 0) {
                     if (date.before(startDate)) {
                         if (setAvailability(date, startDate))  return true;
+                    } else if (date.after(endDate)) {
+                        startDate = uurLijst.get(i + 1).getStart();
+                        if (setAvailability(date, startDate)) return true;
                     }
                 } else if (date.after(endDate)) {
                     startDate = uurLijst.get(i + 1).getStart();
@@ -94,6 +97,14 @@ public class Classroom implements Comparable {
     public int compareTo(@NonNull Object o) {
         String duration1 = this.durationSort;
         String duration2 = ((Classroom) o).durationSort;
-        return duration2.compareTo(duration1);
+
+        String className1 = this.identifier;
+        String className2 = ((Classroom) o).identifier;
+
+        if (duration1.equals(duration2)) {
+            return className1.compareTo(className2);
+        } else {
+            return duration2.compareTo(duration1);
+        }
     }
 }

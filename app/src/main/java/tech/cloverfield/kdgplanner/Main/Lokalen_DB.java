@@ -35,7 +35,6 @@ public class Lokalen_DB extends SQLiteOpenHelper {
     private HashMap<String, Campus> campussen = new HashMap<>();
     private boolean internet = true;
     private boolean loaded = false;
-    private boolean force = false;
     private boolean isUpdating = false;
     private String loadedPercentage = "0%";
 
@@ -75,9 +74,15 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         Cursor res = this.getWritableDatabase().rawQuery("SELECT * FROM Lokalen",null);
         res.moveToFirst();
 
+        int resSize = res.getCount();
+        int i = 0;
         do {
             populateStorageClass(res.getString(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5));
+            i++;
+            loadedPercentage = String.format("%.2f%%", ((double) 100 / resSize) * i);
+            loaded = (i == resSize);
         } while (res.moveToNext());
+        res.close();
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -88,14 +93,14 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                 if (objects[0] == null) {
                     internet = false;
                     isUpdating = false;
-                    if ((!loaded && !force) || force) context.displayWarning(context.getString(R.string.server_connect_error));
+                    if ((!loaded && !context.swipeRefreshLayout.isRefreshing()) || context.swipeRefreshLayout.isRefreshing()) context.displayWarning(context.getString(R.string.server_connect_error));
                 } else {
                     campussen = new HashMap<>();
                     JSONArray jsonArray = (JSONArray) objects[0];
                     onUpgrade(getWritableDatabase(), 0, 0);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
-                            loadedPercentage = String.format("%.2f%%", ((double) 100 / jsonArray.length()) * i);
+                            if (context.swipeRefreshLayout.isRefreshing()) loadedPercentage = String.format("%.2f%%", ((double) 100 / jsonArray.length()) * i);
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String campus = jsonObject.getString("Campus");
                             String classroom = jsonObject.getString("Classroom");
@@ -109,8 +114,8 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                         }
                     }
 
+                    if (context.swipeRefreshLayout.isRefreshing()) loaded = true;
                     isUpdating = false;
-                    loaded = true;
                     internet = true;
                 }
 
@@ -119,7 +124,7 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                     public void run() {
                         context.swipeRefreshLayout.setRefreshing(false);
 
-                        if (objects[0] != null && force) {
+                        if (objects[0] != null && context.swipeRefreshLayout.isRefreshing()) {
                             if (context.button.getText().toString().contains(":")) {
                                 Calendar calendar = Calendar.getInstance();
                                 context.displayAvailable(getRooms(context.convertCampus(context.getSelectedCampus()), DateFormatter.toDate(String.format("%s:00.000 %04d-%02d-%02d", context.button.getText().toString(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US)));
@@ -139,10 +144,14 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         if (isUpdating) return;
         isUpdating = true;
 
-        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE DATE(Date) = date('now') AND DATETIME(Start_Time) > time('now') AND Campus = '" + campus + "'", null);
-        loaded = res.getCount() >= 1;
-        if (!loaded) context.swipeRefreshLayout.setRefreshing(true);
-        if (loaded) populateStorageClasses();
+        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE DATE(Date) = date('now') AND Campus = '" + campus + "'", null);
+
+        boolean hasData = res.getCount() >= 1;
+        if (!hasData) context.swipeRefreshLayout.setRefreshing(true);
+        if (hasData) {
+            populateStorageClasses();
+        }
+
         res.close();
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, "http://server.devvix.com:8000/available_classrooms", null, new Response.Listener<JSONArray>() {
@@ -155,7 +164,7 @@ public class Lokalen_DB extends SQLiteOpenHelper {
             public void onErrorResponse(VolleyError error) {
                 internet = false;
                 isUpdating = false;
-                if ((!loaded && !force) || force) context.displayWarning("Error while connecting to the server,\nplease check your connection or try again later");
+                if ((!loaded && !context.swipeRefreshLayout.isRefreshing()) || context.swipeRefreshLayout.isRefreshing()) context.displayWarning("Error while connecting to the server,\nplease check your connection or try again later");
                 context.swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -186,10 +195,6 @@ public class Lokalen_DB extends SQLiteOpenHelper {
 
     public boolean hasInternet() {
         return internet;
-    }
-
-    public void setForced(boolean value) {
-        force = value;
     }
 
     public String getLoadedPercentage() {

@@ -31,19 +31,28 @@ public class Classroom implements Comparable {
             Date endDate = uurLijst.get(i).getEnd();
             Date startDate = uurLijst.get(i).getStart();
 
-            if (i == uurLijst.size() - 1) {
-                if (date.after(endDate)) {
+            if (uurLijst.size() == 1) {
+                if (date.before(startDate)) {
+                    if (setAvailability(date, startDate)) return true;
+                } else if (date.after(endDate)) {
+                    if (setAvailability(date, null)) return true;
+                }
+            } else if (i == 0) {
+                if (date.before(startDate)) {
+                    if (setAvailability(date, startDate)) return true;
+                } else if (date.after(endDate)) {
+                    startDate = uurLijst.get(i+1).getStart();
+                    if (date.before(startDate)) {
+                        if (setAvailability(date, startDate)) return true;
+                    }
+                }
+
+            } else if (i == uurLijst.size() - 1) {
+                if (date.after(endDate))  {
                     if (setAvailability(date, null)) return true;
                 }
             } else {
-                if (i == 0) {
-                    if (date.before(startDate)) {
-                        if (setAvailability(date, startDate))  return true;
-                    } else if (date.after(endDate)) {
-                        startDate = uurLijst.get(i + 1).getStart();
-                        if (setAvailability(date, startDate)) return true;
-                    }
-                } else if (date.after(endDate)) {
+                if (date.after(endDate)) {
                     startDate = uurLijst.get(i + 1).getStart();
                     if (date.before(startDate)) {
                         if (setAvailability(date, startDate)) return true;

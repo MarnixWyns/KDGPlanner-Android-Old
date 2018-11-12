@@ -12,4 +12,6 @@
     <string name="hours_until">%d uur (tot %02d:%02d)</string>
     <string name="hours_minutes_until">%d uur en %s minuten (tot %02d:%02d)</string>
     <string name="rest_of_the_day">Voor de rest van de dag</string>
+    <string name="configure">Selecteer Campus</string>
+    <string name="add_widget">Voeg widget toe</string>
 </resources>

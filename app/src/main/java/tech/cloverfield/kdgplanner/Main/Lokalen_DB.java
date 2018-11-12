@@ -24,10 +24,10 @@ import java.util.Date;
 import java.util.HashMap;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
-import tech.cloverfield.kdgplanner.Objects.Campus;
-import tech.cloverfield.kdgplanner.Objects.Classroom;
-import tech.cloverfield.kdgplanner.Objects.DateType;
-import tech.cloverfield.kdgplanner.Objects.Uur;
+import tech.cloverfield.kdgplanner.Domain.Campus;
+import tech.cloverfield.kdgplanner.Domain.Classroom;
+import tech.cloverfield.kdgplanner.Domain.DateType;
+import tech.cloverfield.kdgplanner.Domain.Uur;
 import tech.cloverfield.kdgplanner.R;
 
 public class Lokalen_DB extends SQLiteOpenHelper {

@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import tech.cloverfield.kdgplanner.DateFormatter;
-import tech.cloverfield.kdgplanner.Objects.Classroom;
-import tech.cloverfield.kdgplanner.Objects.DateType;
+import tech.cloverfield.kdgplanner.Domain.Classroom;
 
 public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {

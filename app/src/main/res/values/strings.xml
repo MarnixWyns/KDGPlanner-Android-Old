@@ -18,4 +18,7 @@
     <string name="hours_until">%d hour(s) (until %02d:%02d)</string>
     <string name="hours_minutes_until">%d hour(s) and %d minute(s) (until %02d:%02d)</string>
     <string name="rest_of_the_day">For the remainder of the day</string>
+    <string name="appwidget_text" translatable="false">Groenplaats</string>
+    <string name="configure">Select Campus</string>
+    <string name="add_widget">Add Widget</string>
 </resources>

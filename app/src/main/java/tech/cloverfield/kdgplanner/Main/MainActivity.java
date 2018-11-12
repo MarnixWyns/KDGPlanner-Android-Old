@@ -3,7 +3,6 @@ package tech.cloverfield.kdgplanner.Main;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -27,8 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
-import tech.cloverfield.kdgplanner.Objects.Classroom;
-import tech.cloverfield.kdgplanner.Objects.DateType;
+import tech.cloverfield.kdgplanner.Domain.Classroom;
+import tech.cloverfield.kdgplanner.Domain.DateType;
 import tech.cloverfield.kdgplanner.R;
 import tech.cloverfield.kdgplanner.Reservation.ReservationActivity;
 

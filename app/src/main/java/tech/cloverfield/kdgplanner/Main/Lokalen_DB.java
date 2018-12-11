@@ -20,19 +20,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 
 import tech.cloverfield.kdgplanner.DateFormatter;
-import tech.cloverfield.kdgplanner.Domain.Campus;
 import tech.cloverfield.kdgplanner.Domain.Classroom;
 import tech.cloverfield.kdgplanner.Domain.DateType;
-import tech.cloverfield.kdgplanner.Domain.Uur;
 import tech.cloverfield.kdgplanner.R;
 
 public class Lokalen_DB extends SQLiteOpenHelper {
 
-    private HashMap<String, Campus> campussen = new HashMap<>();
     private boolean internet = true;
     private boolean loaded = false;
     private boolean isUpdating = false;
@@ -46,43 +43,25 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, 1);
         this.context = context;
         requestQueue = Volley.newRequestQueue(context);
+        onCreate(this.getWritableDatabase());
+
     }
 
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE Lokalen(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Campus VARCHAR(2),Classroom VARCHAR(255), Start_Time TIME, End_Time TIME, Date DATE)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS Lokalen(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Campus VARCHAR(2),Classroom VARCHAR(255), Start_Time Time, End_Time Time, Date DATE)");
+    }
+
+    public void createIfNotExist() {
+        onCreate(this.getWritableDatabase());
+    }
+
+    public void drop() {
+        this.getWritableDatabase().execSQL("DROP TABLE Lokalen");
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS Lokalen");
         onCreate(db);
-    }
-
-    private void populateStorageClass(String campusInitials, String classroomID, String startTime, String endTime, String date) {
-        startTime += ".000";
-        endTime += ".000";
-        Date startDate = DateFormatter.toDate(String.format("%s %s", startTime, date), DateType.FULL_DATE_US);
-        Date endDate = DateFormatter.toDate(String.format("%s %s", endTime, date), DateType.FULL_DATE_US);
-
-        Campus campus = campussen.get(campusInitials);
-        if (campus == null) campus = new Campus(campusInitials);
-        Uur uur = new Uur(startDate, endDate);
-        campus.addUur(classroomID, startDate, uur, context);
-        campussen.put(campusInitials, campus);
-    }
-
-    private void populateStorageClasses() {
-        Cursor res = this.getWritableDatabase().rawQuery("SELECT * FROM Lokalen",null);
-        res.moveToFirst();
-
-        int resSize = res.getCount();
-        int i = 0;
-        do {
-            populateStorageClass(res.getString(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5));
-            i++;
-            loadedPercentage = String.format("%.2f%%", ((double) 100 / resSize) * i);
-            loaded = (i == resSize);
-        } while (res.moveToNext());
-        res.close();
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -93,22 +72,22 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                 if (objects[0] == null) {
                     internet = false;
                     isUpdating = false;
-                    if ((!loaded && !context.swipeRefreshLayout.isRefreshing()) || context.swipeRefreshLayout.isRefreshing()) context.displayWarning(context.getString(R.string.server_connect_error));
+                    if ((!loaded && !context.swipeRefreshLayout.isRefreshing()) || context.swipeRefreshLayout.isRefreshing())
+                        context.displayWarning(context.getString(R.string.server_connect_error));
                 } else {
-                    campussen = new HashMap<>();
                     JSONArray jsonArray = (JSONArray) objects[0];
                     onUpgrade(getWritableDatabase(), 0, 0);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
-                            if (context.swipeRefreshLayout.isRefreshing()) loadedPercentage = String.format("%.2f%%", ((double) 100 / jsonArray.length()) * i);
+                            if (context.swipeRefreshLayout.isRefreshing())
+                                loadedPercentage = String.format("%.2f%%", ((double) 100 / jsonArray.length()) * i);
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String campus = jsonObject.getString("Campus");
                             String classroom = jsonObject.getString("Classroom");
                             String startTime = jsonObject.getString("Start_Time");
                             String endTime = jsonObject.getString("End_Time");
                             String date = jsonObject.getString("Date");
-                            insertClassroom(i, campus, classroom, startTime, endTime, date);
-                            populateStorageClass(campus, classroom, startTime, endTime, date);
+                            insertClassroom(campus, classroom, startTime, endTime, date);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -122,8 +101,6 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        context.swipeRefreshLayout.setRefreshing(false);
-
                         if (objects[0] != null && context.swipeRefreshLayout.isRefreshing()) {
                             if (context.button.getText().toString().contains(":")) {
                                 Calendar calendar = Calendar.getInstance();
@@ -131,6 +108,7 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                             }
                             context.displayWarning("The classrooms are now up-to-date");
                         }
+                        context.swipeRefreshLayout.setRefreshing(false);
                     }
                 });
                 return null;
@@ -144,17 +122,13 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         if (isUpdating) return;
         isUpdating = true;
 
-        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE DATE(Date) = date('now') AND Campus = '" + campus + "'", null);
+        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE Date('now') = Date AND Campus = '" + campus + "'", null);
 
-        boolean hasData = res.getCount() >= 1;
-        if (!hasData) context.swipeRefreshLayout.setRefreshing(true);
-        if (hasData) {
-            populateStorageClasses();
-        }
-
+        loaded = res.getCount() >= 1;
+        if (!loaded) context.swipeRefreshLayout.setRefreshing(true);
         res.close();
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, "http://server.devvix.com:8000/available_classrooms", null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, "https://www.devvix.com:2087/api/partial/free", null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 jsonHandler(response);
@@ -164,7 +138,8 @@ public class Lokalen_DB extends SQLiteOpenHelper {
             public void onErrorResponse(VolleyError error) {
                 internet = false;
                 isUpdating = false;
-                if ((!loaded && !context.swipeRefreshLayout.isRefreshing()) || context.swipeRefreshLayout.isRefreshing()) context.displayWarning("Error while connecting to the server,\nplease check your connection or try again later");
+                if ((!loaded && !context.swipeRefreshLayout.isRefreshing()) || context.swipeRefreshLayout.isRefreshing())
+                    context.displayWarning("Error while connecting to the server,\nplease check your connection or try again later");
                 context.swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -172,12 +147,11 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         requestQueue.add(jsonArrayRequest);
     }
 
-    private void insertClassroom(int ID, String Campus, String Classroom, String Start_Time, String End_Time, String Date) {
+    private void insertClassroom(String Campus, String Classroom, String Start_Time, String End_Time, String Date) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("ID", ID);
         contentValues.put("Campus", Campus);
-        contentValues.put("Classroom", Classroom.replace(" ", ""));
+        contentValues.put("Classroom", Classroom);
         contentValues.put("Start_Time", Start_Time);
         contentValues.put("End_Time", End_Time);
         contentValues.put("Date", Date);
@@ -185,8 +159,30 @@ public class Lokalen_DB extends SQLiteOpenHelper {
     }
 
     public ArrayList<Classroom> getRooms(String campus, Date time) {
-        if (!campussen.containsKey(campus)) return new ArrayList<>();
-        return campussen.get(campus).getAvailableClassrooms(time);
+        ArrayList<Classroom> rooms = new ArrayList<>();
+        boolean checked = false;
+        Cursor cursor = null;
+
+        do {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String query = String.format("SELECT Classroom, Date, End_Time FROM Lokalen WHERE Campus = '%s' AND Date('%s') = Date AND Time('%s') BETWEEN Start_Time AND Time(End_Time, '-%d MINUTES')", campus, DateFormatter.decode(time, DateType.DATE_US), DateFormatter.decode(time, DateType.TIME_FULL), 15);
+            Cursor newCursor = db.rawQuery(query, null);
+            if (cursor != null && newCursor.getCount() <= cursor.getCount()) checked = true;
+            cursor = newCursor;
+        } while (!checked && cursor != null);
+
+        cursor.moveToFirst();
+        cursor.getCount();
+        while (cursor.moveToNext()) {
+            Date endDate = DateFormatter.toDate(cursor.getString(2) + ".000 " + cursor.getString(1), DateType.FULL_DATE_US);
+            rooms.add(new Classroom(cursor.getString(0), endDate, time, context));
+        }
+        try {
+            Collections.sort(rooms);
+        } catch (NullPointerException e) {
+            System.out.println("kdgPlanner: " + e.getMessage());
+        }
+        return rooms;
     }
 
     public boolean isLoaded() {

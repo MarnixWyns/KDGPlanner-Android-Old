@@ -20,7 +20,8 @@ public class DateFormatter {
                 input += ":00.000";
                 template = new SimpleDateFormat("kk:mm:ss.SSS");
             }
-            else if (type == DateType.DATE) template = new SimpleDateFormat("yyyy-MM-dd");
+            else if (type == DateType.DATE_BE) template = new SimpleDateFormat("dd-MM-yyyy");
+            else if (type == DateType.DATE_US) template = new SimpleDateFormat("yyyy-MM-dd");
             else if (type == DateType.FULL_DATE_US) template = new SimpleDateFormat("kk:mm:ss.SSS yyyy-MM-dd");
             else if (type == DateType.FULL_DATE_BE) template = new SimpleDateFormat("kk:mm:ss.SSS dd-MM-yyyy");
             else return null;
@@ -39,8 +40,12 @@ public class DateFormatter {
         String fixed = "";
         if (type == DateType.TIME) {
             fixed = String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-        } else if (type == DateType.DATE) {
+        } if (type == DateType.TIME_FULL) {
+            fixed = String.format("%02d:%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
+        } else if (type == DateType.DATE_BE) {
             fixed = String.format("%02d-%02d-%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        } else if (type == DateType.DATE_US) {
+            fixed = String.format("%04d-%02d-%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
         } else if (type == DateType.FULL_DATE_BE) {
             fixed = String.format("%02d:%02d %02d-%02d-%04d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
         } else if (type == DateType.FULL_DATE_US) {

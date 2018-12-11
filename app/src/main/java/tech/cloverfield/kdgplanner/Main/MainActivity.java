@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private int PERMISSION_KEY = 64556;
 
+    boolean DEBUG_ON = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         button = findViewById(R.id.btnSelectHour);
         button.setOnClickListener(btnOnClickListener);
+        if (DEBUG_ON) button.setOnLongClickListener(onLongClickListener);
 
         FloatingActionButton fab = findViewById(R.id.fabReservation);
         fab.setOnClickListener(fabOnClick);
@@ -140,6 +143,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
 
+    };
+
+    private View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            lokalen_db.drop();
+            lokalen_db.createIfNotExist();
+            lokalen_db.update(campusTranslator.get(selectedCampus));
+            return true;
+        }
     };
 
     public void displayAvailable(ArrayList<Classroom> classrooms) {

@@ -2,6 +2,7 @@ package tech.cloverfield.kdgplanner.Main;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -39,12 +40,11 @@ public class Lokalen_DB extends SQLiteOpenHelper {
     private MainActivity context;
     private RequestQueue requestQueue;
 
-    public Lokalen_DB(MainActivity context) {
+    public Lokalen_DB(Context context) {
         super(context, DATABASE_NAME, null, 1);
-        this.context = context;
+        this.context = (MainActivity) context;
         requestQueue = Volley.newRequestQueue(context);
         onCreate(this.getWritableDatabase());
-
     }
 
     public void onCreate(SQLiteDatabase db) {
@@ -93,24 +93,26 @@ public class Lokalen_DB extends SQLiteOpenHelper {
                         }
                     }
 
-                    if (context.swipeRefreshLayout.isRefreshing()) loaded = true;
+                    if (context.swipeRefreshLayout.isRefreshing())
+                        loaded = true;
                     isUpdating = false;
                     internet = true;
                 }
 
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (objects[0] != null && context.swipeRefreshLayout.isRefreshing()) {
-                            if (context.button.getText().toString().contains(":")) {
-                                Calendar calendar = Calendar.getInstance();
-                                context.displayAvailable(getRooms(context.convertCampus(context.getSelectedCampus()), DateFormatter.toDate(String.format("%s:00.000 %04d-%02d-%02d", context.button.getText().toString(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US)));
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (objects[0] != null && context.swipeRefreshLayout != null && context.swipeRefreshLayout.isRefreshing()) {
+                                if (context.button.getText().toString().contains(":")) {
+                                    Calendar calendar = Calendar.getInstance();
+                                    context.displayAvailable(getRooms(context.convertCampus(context.getSelectedCampus()), DateFormatter.toDate(String.format("%s:00.000 %04d-%02d-%02d", context.button.getText().toString(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US)));
+                                }
+                                context.displayWarning("The classrooms are now up-to-date");
                             }
-                            context.displayWarning("The classrooms are now up-to-date");
+                            if (context.swipeRefreshLayout != null)
+                                context.swipeRefreshLayout.setRefreshing(false);
                         }
-                        context.swipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+                    });
                 return null;
             }
         };
@@ -125,7 +127,8 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE Date('now') = Date AND Campus = '" + campus + "'", null);
 
         loaded = res.getCount() >= 1;
-        if (!loaded) context.swipeRefreshLayout.setRefreshing(true);
+        if (!loaded)
+            context.swipeRefreshLayout.setRefreshing(true);
         res.close();
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, "https://www.devvix.com:2087/api/partial/free", null, new Response.Listener<JSONArray>() {
@@ -175,7 +178,7 @@ public class Lokalen_DB extends SQLiteOpenHelper {
         cursor.getCount();
         while (cursor.moveToNext()) {
             Date endDate = DateFormatter.toDate(cursor.getString(2) + ".000 " + cursor.getString(1), DateType.FULL_DATE_US);
-            rooms.add(new Classroom(cursor.getString(0), endDate, time, context));
+                rooms.add(new Classroom(cursor.getString(0), endDate, time, context));
         }
         try {
             Collections.sort(rooms);

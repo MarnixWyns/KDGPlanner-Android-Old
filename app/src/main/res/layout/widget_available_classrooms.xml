@@ -5,23 +5,28 @@
     android:orientation="vertical"
     android:padding="@dimen/widget_margin">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/widgetCampusTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/appwidget_text"
-            android:textColor="#FFF"
             android:textSize="18sp"
             android:textAlignment="center"
-            android:gravity="center"/>
-    </RelativeLayout>
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:text="GROENPLAATS"/>
+        <Button
+            android:id="@+id/settingsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:text="@string/widget_back"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/lvClassroomsWidget"

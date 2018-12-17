@@ -14,4 +14,5 @@
     <string name="rest_of_the_day">Voor de rest van de dag</string>
     <string name="configure">Selecteer Campus</string>
     <string name="add_widget">Voeg widget toe</string>
+    <string name="widget_back">Instellingen</string>
 </resources>

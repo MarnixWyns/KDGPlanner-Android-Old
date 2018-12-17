@@ -1,10 +1,23 @@
 package tech.cloverfield.kdgplanner.Widgets;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.View;
 import android.widget.RemoteViews;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import tech.cloverfield.kdgplanner.Domain.Classroom;
+import tech.cloverfield.kdgplanner.Main.Lokalen_DB;
+import tech.cloverfield.kdgplanner.Main.MainActivity;
 import tech.cloverfield.kdgplanner.R;
 
 /**
@@ -13,23 +26,59 @@ import tech.cloverfield.kdgplanner.R;
  */
 public class WidgetAvailableClassrooms extends AppWidgetProvider {
 
+    private static final String PREF_PREFIX_KEY = "kdg-planner-widget";
+    private static final String PREFS_NAME = "tech.cloverfield.kdgplanner.Widgets.WidgetAvailableClassrooms";
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        String campus = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_available_classrooms);
+        remoteViews.setTextViewText(R.id.widgetCampusTitle, campus);
 
-        CharSequence widgetText = WidgetAvailableClassroomsConfigureActivity.loadTitlePref(context, appWidgetId);
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_available_classrooms);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
+        Intent intent = new Intent(context, WidgetRemoteViewsService.class);
+        intent.putExtra("kdgPlannerCampus", campus);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        remoteViews.setRemoteAdapter(R.id.lvClassroomsWidget, intent);
+
+        //ConfigureSettingsButton
+        Intent configIntent = new Intent(context, WidgetAvailableClassroomsConfigureActivity.class);
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
+        remoteViews.setOnClickPendingIntent(R.id.settingsBtn, pendingIntent);
+
+        appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+        for (int appWidgetId: appWidgetIds) {
+            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+            String campus = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
+
+            RemoteViews views = new RemoteViews(
+                    context.getPackageName(),
+                    R.layout.widget_available_classrooms
+            );
+
+            Intent intent = new Intent(context, WidgetRemoteViewsService.class);
+            views.setTextViewText(R.id.widgetCampusTitle, campus);
+            intent.putExtra("kdgPlannerCampus", campus);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+
+            views.setRemoteAdapter(R.id.lvClassroomsWidget, intent);
+
+            //ConfigureSettingsButton
+            Intent configIntent = new Intent(context, WidgetAvailableClassroomsConfigureActivity.class);
+            configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
+            views.setOnClickPendingIntent(R.id.settingsBtn, pendingIntent);
+
+            appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
 
@@ -39,16 +88,6 @@ public class WidgetAvailableClassrooms extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             WidgetAvailableClassroomsConfigureActivity.deleteTitlePref(context, appWidgetId);
         }
-    }
-
-    @Override
-    public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
     }
 }
 

@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
+import tech.cloverfield.kdgplanner.application.MainActivity;
 import tech.cloverfield.kdgplanner.DateFormatter;
 import tech.cloverfield.kdgplanner.Domain.Classroom;
 import tech.cloverfield.kdgplanner.Domain.DateType;

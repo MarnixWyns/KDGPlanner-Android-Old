@@ -7,17 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.View;
 import android.widget.RemoteViews;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import tech.cloverfield.kdgplanner.Domain.Classroom;
-import tech.cloverfield.kdgplanner.Main.Lokalen_DB;
-import tech.cloverfield.kdgplanner.Main.MainActivity;
 import tech.cloverfield.kdgplanner.R;
 
 /**

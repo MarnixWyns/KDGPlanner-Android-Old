@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import tech.cloverfield.kdgplanner.application.MainActivity;
 import tech.cloverfield.kdgplanner.Domain.Classroom;
 
 public class TimePickerFragment extends DialogFragment

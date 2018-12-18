@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.Reservation;
+package tech.cloverfield.kdgplanner.application;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;

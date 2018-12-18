@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.Main;
+package tech.cloverfield.kdgplanner.application;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -28,8 +28,9 @@ import java.util.HashMap;
 import tech.cloverfield.kdgplanner.DateFormatter;
 import tech.cloverfield.kdgplanner.Domain.Classroom;
 import tech.cloverfield.kdgplanner.Domain.DateType;
+import tech.cloverfield.kdgplanner.Main.Lokalen_DB;
+import tech.cloverfield.kdgplanner.Main.TimePickerFragment;
 import tech.cloverfield.kdgplanner.R;
-import tech.cloverfield.kdgplanner.Reservation.ReservationActivity;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 

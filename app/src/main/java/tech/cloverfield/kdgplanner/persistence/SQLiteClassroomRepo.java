@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.Main;
+package tech.cloverfield.kdgplanner.persistence;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -25,12 +25,12 @@ import java.util.Collections;
 import java.util.Date;
 
 import tech.cloverfield.kdgplanner.application.MainActivity;
-import tech.cloverfield.kdgplanner.DateFormatter;
-import tech.cloverfield.kdgplanner.Domain.Classroom;
-import tech.cloverfield.kdgplanner.Domain.DateType;
+import tech.cloverfield.kdgplanner.foundation.DateFormatter;
+import tech.cloverfield.kdgplanner.business.domain.Classroom;
+import tech.cloverfield.kdgplanner.business.domain.DateType;
 import tech.cloverfield.kdgplanner.R;
 
-public class Lokalen_DB extends SQLiteOpenHelper {
+public class MySQLClassroomRepo extends SQLiteOpenHelper {
 
     private boolean internet = true;
     private boolean loaded = false;
@@ -41,7 +41,7 @@ public class Lokalen_DB extends SQLiteOpenHelper {
     private MainActivity context;
     private RequestQueue requestQueue;
 
-    public Lokalen_DB(Context context) {
+    public MySQLClassroomRepo(Context context) {
         super(context, DATABASE_NAME, null, 1);
         this.context = (MainActivity) context;
         requestQueue = Volley.newRequestQueue(context);

@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner;
+package tech.cloverfield.kdgplanner.business;
 
 import android.annotation.SuppressLint;
 
@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import tech.cloverfield.kdgplanner.Domain.DateType;
+import tech.cloverfield.kdgplanner.business.domain.DateType;
 
 public class DateFormatter {
 

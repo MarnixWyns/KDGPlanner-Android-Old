@@ -25,11 +25,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-import tech.cloverfield.kdgplanner.DateFormatter;
-import tech.cloverfield.kdgplanner.Domain.Classroom;
-import tech.cloverfield.kdgplanner.Domain.DateType;
-import tech.cloverfield.kdgplanner.Main.Lokalen_DB;
-import tech.cloverfield.kdgplanner.Main.TimePickerFragment;
+import tech.cloverfield.kdgplanner.business.domain.Campus;
+import tech.cloverfield.kdgplanner.controller.KDGPlannerController;
+import tech.cloverfield.kdgplanner.foundation.DateFormatter;
+import tech.cloverfield.kdgplanner.business.domain.Classroom;
+import tech.cloverfield.kdgplanner.business.domain.DateType;
+import tech.cloverfield.kdgplanner.persistence.SQLiteClassroomRepo;
 import tech.cloverfield.kdgplanner.R;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -37,10 +38,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public Button button;
     public SwipeRefreshLayout swipeRefreshLayout;
 
+    private KDGPlannerController controller;
+
     private Spinner spinner;
-    private Lokalen_DB lokalen_db;
-    private String selectedCampus = "Groenplaats";
-    private HashMap<String, String> campusTranslator = new HashMap<>();
+    private SQLiteClassroomRepo SQLiteClassroomRepo;
 
     private int PERMISSION_KEY = 64556;
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        controller = new KDGPlannerController();
         setContentView(R.layout.activity_main);
         if (requestPermissions()) {
             permissionGranted();
@@ -56,10 +58,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void permissionGranted() {
-        campusTranslator.put("groenplaats", "GR");
-        campusTranslator.put("pothoek", "PH");
-        campusTranslator.put("stadswaag", "SW");
-
         spinner = findViewById(R.id.spinnerMain);
         spinner.setOnItemSelectedListener(this);
 
@@ -70,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         button = findViewById(R.id.btnSelectHour);
         button.setOnClickListener(btnOnClickListener);
-        if (DEBUG_ON) button.setOnLongClickListener(onLongClickListener);
 
         FloatingActionButton fab = findViewById(R.id.fabReservation);
         fab.setOnClickListener(fabOnClick);
@@ -78,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         swipeRefreshLayout = findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
 
-        lokalen_db = new Lokalen_DB(this);
+        SQLiteClassroomRepo = new SQLiteClassroomRepo(this);
         //Refreshing ON
-        lokalen_db.update(convertCampus(selectedCampus));
+        SQLiteClassroomRepo.update(controller.getActiveCampus().getLongName());
     }
 
     public boolean requestPermissions() {
@@ -109,16 +106,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    public String convertCampus(String campus) {
-        return campusTranslator.get(campus.toLowerCase());
-    }
 
-    public Lokalen_DB getLokalen_db() {
-        return lokalen_db;
-    }
-
-    public String getSelectedCampus() {
-        return selectedCampus;
+    public SQLiteClassroomRepo getSQLiteClassroomRepo() {
+        return SQLiteClassroomRepo;
     }
 
     private View.OnClickListener fabOnClick = new View.OnClickListener() {
@@ -133,9 +123,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private View.OnClickListener btnOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!lokalen_db.isLoaded()) {
-                Snackbar.make(findViewById(R.id.coordinator), String.format(getString(R.string.db_init_load), lokalen_db.getLoadedPercentage()), Snackbar.LENGTH_SHORT).show();
-            } else if (!lokalen_db.isLoaded() && !lokalen_db.hasInternet()) {
+            if (!SQLiteClassroomRepo.isLoaded()) {
+                Snackbar.make(findViewById(R.id.coordinator), String.format(getString(R.string.db_init_load), SQLiteClassroomRepo.getLoadedPercentage()), Snackbar.LENGTH_SHORT).show();
+            } else if (!SQLiteClassroomRepo.isLoaded() && !SQLiteClassroomRepo.hasInternet()) {
                     Snackbar.make(findViewById(R.id.coordinator), getString(R.string.server_connect_error), Snackbar.LENGTH_SHORT).show();
             } else {
                 DialogFragment dialog = new TimePickerFragment();
@@ -144,16 +134,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
 
-    };
-
-    private View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            lokalen_db.drop();
-            lokalen_db.createIfNotExist();
-            lokalen_db.update(campusTranslator.get(selectedCampus));
-            return true;
-        }
     };
 
     public void displayAvailable(ArrayList<Classroom> classrooms) {
@@ -182,13 +162,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @SuppressLint("DefaultLocale")
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        selectedCampus = spinner.getSelectedItem().toString();
+        controller.setActiveCampus(Campus.valueOf(spinner.getSelectedItem().toString().toUpperCase()));
+
         Calendar calendar = Calendar.getInstance();
         String buttonText = (String) button.getText();
 
         if (buttonText.contains(":")) {
             Date date = DateFormatter.toDate(String.format("%s:00.000 %04d-%02d-%02d", buttonText, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US);
-            displayAvailable(lokalen_db.getRooms(convertCampus(selectedCampus), date));
+
+
+            displayAvailable(SQLiteClassroomRepo.getRooms(controller.getActiveCampus().getLongName(), date));
         } else {
             displayAvailable(null);
         }
@@ -209,8 +192,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         public void onRefresh() {
             swipeRefreshLayout.setRefreshing(true);
             //Refreshing ON
-            lokalen_db.update(convertCampus(selectedCampus));
+            SQLiteClassroomRepo.update(controller.getActiveCampus().getLongName());
             displayWarning(getString(R.string.info_refreshing_db));
         }
     };
+
+    public KDGPlannerController getController() {
+        return controller;
+    }
 }

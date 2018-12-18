@@ -11,7 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import tech.cloverfield.kdgplanner.application.MainActivity;
-import tech.cloverfield.kdgplanner.Domain.Classroom;
+import tech.cloverfield.kdgplanner.business.domain.Classroom;
 
 public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
@@ -39,7 +39,7 @@ public class TimePickerFragment extends DialogFragment
 
         mainActivity.button.setText(String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
 
-        ArrayList<Classroom> available = new ArrayList<>(mainActivity.getLokalen_db().getRooms(mainActivity.convertCampus(mainActivity.getSelectedCampus()), time));
+        ArrayList<Classroom> available = new ArrayList<>(mainActivity.getMySQLClassroomRepo().getRooms(mainActivity.convertCampus(mainActivity.getSelectedCampus()), time));
         mainActivity.displayAvailable(available);
     }
 }

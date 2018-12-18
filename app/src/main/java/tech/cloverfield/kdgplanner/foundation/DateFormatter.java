@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.business;
+package tech.cloverfield.kdgplanner.foundation;
 
 import android.annotation.SuppressLint;
 

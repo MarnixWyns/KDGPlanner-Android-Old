@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.Main;
+package tech.cloverfield.kdgplanner.application;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import tech.cloverfield.kdgplanner.application.MainActivity;
 import tech.cloverfield.kdgplanner.business.domain.Classroom;
 
 public class TimePickerFragment extends DialogFragment
@@ -39,7 +38,7 @@ public class TimePickerFragment extends DialogFragment
 
         mainActivity.button.setText(String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
 
-        ArrayList<Classroom> available = new ArrayList<>(mainActivity.getMySQLClassroomRepo().getRooms(mainActivity.convertCampus(mainActivity.getSelectedCampus()), time));
+        ArrayList<Classroom> available = new ArrayList<>(mainActivity.getSQLiteClassroomRepo().getRooms(mainActivity.getController().getActiveCampus().getLongName(), time));
         mainActivity.displayAvailable(available);
     }
 }

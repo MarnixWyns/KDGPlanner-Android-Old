@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.Domain;
+package tech.cloverfield.kdgplanner.business.domain;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

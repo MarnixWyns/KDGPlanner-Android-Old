@@ -25,12 +25,13 @@ import java.util.Collections;
 import java.util.Date;
 
 import tech.cloverfield.kdgplanner.application.MainActivity;
+import tech.cloverfield.kdgplanner.business.domain.Campus;
 import tech.cloverfield.kdgplanner.foundation.DateFormatter;
 import tech.cloverfield.kdgplanner.business.domain.Classroom;
 import tech.cloverfield.kdgplanner.business.domain.DateType;
 import tech.cloverfield.kdgplanner.R;
 
-public class MySQLClassroomRepo extends SQLiteOpenHelper {
+public class SQLiteClassroomRepo extends SQLiteOpenHelper {
 
     private boolean internet = true;
     private boolean loaded = false;
@@ -41,7 +42,7 @@ public class MySQLClassroomRepo extends SQLiteOpenHelper {
     private MainActivity context;
     private RequestQueue requestQueue;
 
-    public MySQLClassroomRepo(Context context) {
+    public SQLiteClassroomRepo(Context context) {
         super(context, DATABASE_NAME, null, 1);
         this.context = (MainActivity) context;
         requestQueue = Volley.newRequestQueue(context);
@@ -65,67 +66,13 @@ public class MySQLClassroomRepo extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private void jsonHandler(JSONArray jsonArray) {
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(final Object[] objects) {
-                if (objects[0] == null) {
-                    internet = false;
-                    isUpdating = false;
-                    if ((!loaded && !context.swipeRefreshLayout.isRefreshing()) || context.swipeRefreshLayout.isRefreshing())
-                        context.displayWarning(context.getString(R.string.server_connect_error));
-                } else {
-                    JSONArray jsonArray = (JSONArray) objects[0];
-                    onUpgrade(getWritableDatabase(), 0, 0);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        try {
-                            if (context.swipeRefreshLayout.isRefreshing())
-                                loadedPercentage = String.format("%.2f%%", ((double) 100 / jsonArray.length()) * i);
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            String campus = jsonObject.getString("Campus");
-                            String classroom = jsonObject.getString("Classroom");
-                            String startTime = jsonObject.getString("Start_Time");
-                            String endTime = jsonObject.getString("End_Time");
-                            String date = jsonObject.getString("Date");
-                            insertClassroom(campus, classroom, startTime, endTime, date);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
-                    if (context.swipeRefreshLayout.isRefreshing())
-                        loaded = true;
-                    isUpdating = false;
-                    internet = true;
-                }
 
-                    context.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (objects[0] != null && context.swipeRefreshLayout != null && context.swipeRefreshLayout.isRefreshing()) {
-                                if (context.button.getText().toString().contains(":")) {
-                                    Calendar calendar = Calendar.getInstance();
-                                    context.displayAvailable(getRooms(context.convertCampus(context.getSelectedCampus()), DateFormatter.toDate(String.format("%s:00.000 %04d-%02d-%02d", context.button.getText().toString(), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH)), DateType.FULL_DATE_US)));
-                                }
-                                context.displayWarning("The classrooms are now up-to-date");
-                            }
-                            if (context.swipeRefreshLayout != null)
-                                context.swipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
-                return null;
-            }
-        };
-
-        task.execute(jsonArray);
-    }
-
-    public void update(String campus) {
+    public void update(Campus campus) {
         if (isUpdating) return;
         isUpdating = true;
 
-        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE Date('now') = Date AND Campus = '" + campus + "'", null);
+        Cursor res = this.getReadableDatabase().rawQuery("SELECT * FROM Lokalen WHERE Date('now') = Date AND Campus = '" + campus.getLongName() + "'", null);
 
         loaded = res.getCount() >= 1;
         if (!loaded)

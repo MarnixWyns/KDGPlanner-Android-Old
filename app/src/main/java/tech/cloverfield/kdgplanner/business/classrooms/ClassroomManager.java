@@ -1,20 +1,48 @@
-package tech.cloverfield.kdgplanner.business;
+package tech.cloverfield.kdgplanner.business.domain.classrooms;
 
-import android.annotation.SuppressLint;
-import android.os.AsyncTask;
+import android.content.Context;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.Collection;
+import java.util.Date;
 
-import java.util.Calendar;
-
-import tech.cloverfield.kdgplanner.R;
-import tech.cloverfield.kdgplanner.business.domain.DateType;
-import tech.cloverfield.kdgplanner.foundation.DateFormatter;
+import tech.cloverfield.kdgplanner.business.domain.Campus;
+import tech.cloverfield.kdgplanner.business.domain.Classroom;
+import tech.cloverfield.kdgplanner.business.domain.Lesson;
+import tech.cloverfield.kdgplanner.persistence.classrooms.ClassroomRepoSQLite;
+import tech.cloverfield.kdgplanner.persistence.classrooms.IClassroomRepo;
 
 public class ClassroomManager implements IClassroomManager {
 
+    private IClassroomRepo repo;
+
+    public ClassroomManager(Context context) {
+        repo = new ClassroomRepoSQLite(context);
+    }
+
+    @Override
+    public void updateClassrooms(Campus activeCampus) {
+
+    }
+
+    @Override
+    public Collection<Classroom> getAvailableClassrooms(Campus campus, Date date) {
+        return null;
+    }
+
+    @Override
+    public Collection<Lesson> getLessonsByRoom(Campus campus, Classroom room) {
+        return null;
+    }
+
+    @Override
+    public int getLoadPercentage() {
+        return 0;
+    }
+
+    @Override
+    public void syncCache() {
+
+    }
 
 
 
@@ -27,9 +55,7 @@ public class ClassroomManager implements IClassroomManager {
 
 
 
-
-
-
+/* God have mercy on me
     
     @SuppressLint("StaticFieldLeak")
     private void jsonHandler(JSONArray jsonArray) {
@@ -86,4 +112,6 @@ public class ClassroomManager implements IClassroomManager {
 
         task.execute(jsonArray);
     }
+
+*/
 }

@@ -3,7 +3,7 @@ package tech.cloverfield.kdgplanner;
 import org.junit.Test;
 
 import tech.cloverfield.kdgplanner.business.domain.Student;
-import tech.cloverfield.kdgplanner.controller.KDGPlannerController;
+import tech.cloverfield.kdgplanner.controller.ClassroomController;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
-    public KDGPlannerController controller;
+    public ClassroomController controller;
 
     @Test
     public void studentsFormat() throws Exception {

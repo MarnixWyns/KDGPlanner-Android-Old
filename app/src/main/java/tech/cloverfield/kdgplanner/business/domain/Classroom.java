@@ -48,12 +48,9 @@ public class Classroom implements Comparable {
         }
     }
 
-    public String getDuration() {
-        return this.duration;
-    }
-
-    public String getIdentifier() {
-        return this.identifier;
+    @Override
+    public String toString() {
+        return String.format(context.getString(R.string.class_availability), this.identifier, this.duration);
     }
 
     @Override

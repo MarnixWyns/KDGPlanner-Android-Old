@@ -38,7 +38,7 @@ public class TimePickerFragment extends DialogFragment
 
         mainActivity.button.setText(String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
 
-        ArrayList<Classroom> available = new ArrayList<>(mainActivity.getSQLiteClassroomRepo().getRooms(mainActivity.getController().getActiveCampus().getLongName(), time));
+        ArrayList<Classroom> available = new ArrayList<>(mainActivity.getRoomController().getAvailableClassrooms(time));
         mainActivity.displayAvailable(available);
     }
 }

@@ -1,11 +1,13 @@
 package tech.cloverfield.kdgplanner.business.domain;
 
+import java.util.List;
+
 public class Student {
-    private ClassEnrollment classEnrollment;
+    private List<ClassEnrollment> classEnrollment;
     private String firstName;
     private String lastName;
 
-    public Student(ClassEnrollment classEnrollment, String firstName, String lastName) {
+    public Student(List<ClassEnrollment> classEnrollment, String firstName, String lastName) {
         this.classEnrollment = classEnrollment;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -18,14 +20,6 @@ public class Student {
 
     public String getClassFormatted(){
         return classEnrollment.toString();
-    }
-
-    public ClassEnrollment getClassEnrollment() {
-        return classEnrollment;
-    }
-
-    public void setClassEnrollment(ClassEnrollment classEnrollment) {
-        this.classEnrollment = classEnrollment;
     }
 
     public String getFirstName() {

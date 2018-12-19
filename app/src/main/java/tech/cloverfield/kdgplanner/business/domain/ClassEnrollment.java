@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 class ClassEnrollment {
 
+    private int enrollment_id;
     private StudyField studyField;
     private int year;
     private int classNumber;

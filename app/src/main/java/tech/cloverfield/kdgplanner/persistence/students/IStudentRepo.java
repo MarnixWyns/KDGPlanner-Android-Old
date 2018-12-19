@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.persistence;
+package tech.cloverfield.kdgplanner.persistence.students;
 
 import java.util.List;
 

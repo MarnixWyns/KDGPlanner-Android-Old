@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.business.domain.classrooms;
+package tech.cloverfield.kdgplanner.business.classrooms;
 
 import java.util.Collection;
 import java.util.Date;
@@ -12,5 +12,4 @@ public interface IClassroomManager {
     Collection<Classroom> getAvailableClassrooms(Campus campus, Date date);
     Collection<Lesson> getLessonsByRoom(Campus campus, Classroom room);
     int getLoadPercentage();
-    void syncCache();
 }

@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.business.domain.settings;
+package tech.cloverfield.kdgplanner.business.settings;
 
 import android.os.AsyncTask;
 

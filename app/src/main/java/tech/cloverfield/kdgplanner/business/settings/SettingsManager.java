@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.business.domain.settings;
+package tech.cloverfield.kdgplanner.business.settings;
 
 import android.content.Context;
 
@@ -16,8 +16,6 @@ public class SettingsManager implements ISettingsManager {
         this.context = context;
         repo = new SettingsRepoKeyValue(context);
     }
-
-
 
     @Override
     public boolean testConnection() {
@@ -41,26 +39,26 @@ public class SettingsManager implements ISettingsManager {
 
     @Override
     public String getSettingString(String setting) {
-        return null;
+        return repo.getSettingString(setting);
     }
 
     @Override
     public int getSettingInt(String setting) {
-        return 0;
+        return repo.getSettingInt(setting);
     }
 
     @Override
     public boolean getSettingBool(String setting) {
-        return false;
+        return repo.getSettingBool(setting);
     }
 
     @Override
     public Collection<?> getAllSettingValues() {
-        return null;
+        return repo.getAllSettingValues();
     }
 
     @Override
     public Collection<String> getAllSettingKeys() {
-        return null;
+        return repo.getAllSettingKeys();
     }
 }

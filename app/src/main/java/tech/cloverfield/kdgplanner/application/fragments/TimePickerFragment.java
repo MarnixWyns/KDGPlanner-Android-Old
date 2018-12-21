@@ -1,4 +1,4 @@
-package tech.cloverfield.kdgplanner.application;
+package tech.cloverfield.kdgplanner.application.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import tech.cloverfield.kdgplanner.application.activities.MainActivity;
 import tech.cloverfield.kdgplanner.business.domain.Classroom;
 
 public class TimePickerFragment extends DialogFragment
@@ -28,7 +29,7 @@ public class TimePickerFragment extends DialogFragment
 
     @SuppressLint("DefaultLocale")
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        MainActivity mainActivity = (MainActivity) getActivity();
+        MainFragment mainFragment = MainFragment.getMainFragment();
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cal.set(Calendar.MINUTE, minute);
@@ -36,9 +37,9 @@ public class TimePickerFragment extends DialogFragment
         cal.set(Calendar.MILLISECOND, 0);
         Date time = cal.getTime();
 
-        mainActivity.button.setText(String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
+        mainFragment.button.setText(String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)));
 
-        ArrayList<Classroom> available = new ArrayList<>(mainActivity.getRoomController().getAvailableClassrooms(time));
-        mainActivity.displayAvailable(available);
+        ArrayList<Classroom> available = new ArrayList<>(((MainActivity) getActivity()).getRoomController().getAvailableClassrooms(time));
+        mainFragment.displayAvailable(available);
     }
 }

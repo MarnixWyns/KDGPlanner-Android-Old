@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!-- TODO fix refresh layout to allow scrolling upwards instead of refreshing -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/coordinator">
+    android:layout_height="match_parent"
+    tools:context=".application.fragments.MainFragment"
+    android:id="@+id/coordinator">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            tools:context="tech.cloverfield.kdgplanner.application.MainActivity">
+            tools:context="tech.cloverfield.kdgplanner.application.activities.MainActivity">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -52,22 +47,5 @@
             </android.support.v4.widget.SwipeRefreshLayout>
 
         </LinearLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabReservation"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="20dp"
-            android:layout_marginEnd="20dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:elevation="4dp"
-            app:srcCompat="@drawable/ic_add_black_32dp"
-            tools:layout_editor_absoluteX="288dp"
-            tools:layout_editor_absoluteY="535dp" />
-    </RelativeLayout>
 
 </RelativeLayout>

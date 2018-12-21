@@ -10,7 +10,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.Collection;
 import java.util.Date;
 
-import tech.cloverfield.kdgplanner.application.MainActivity;
+import tech.cloverfield.kdgplanner.application.activities.MainActivity;
 import tech.cloverfield.kdgplanner.business.domain.Campus;
 import tech.cloverfield.kdgplanner.business.domain.Lesson;
 import tech.cloverfield.kdgplanner.business.domain.Classroom;

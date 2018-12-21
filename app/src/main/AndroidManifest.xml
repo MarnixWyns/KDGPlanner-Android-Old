@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".application.MainActivity"
+            android:name=".application.activities.MainActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".application.ReservationActivity"
+            android:name=".application.fragments.ReservationFragment"
             android:configChanges="orientation|screenSize" />
 
         <receiver android:name=".Widgets.WidgetAvailableClassrooms">

@@ -23,4 +23,6 @@
     <string name="add_widget">Add Widget</string>
     <string name="widget_back">Settings</string>
     <string name="error_connection">Could not connect to database, check your connection.</string>
+    <string name="navigation_drawer_open">Open menu</string>
+    <string name="navigation_drawer_close">Close menu</string>
 </resources>
